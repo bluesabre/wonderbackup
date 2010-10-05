@@ -9,7 +9,8 @@ from shutil import copy2
 from os import walk, listdir, mkdir
 from os.path import isdir, isfile, islink
 
-from file_functions import *
+#from file_functions import *
+#from output_functions import *
 
 def get_contents(directory):
     """get_contents( string directory ) -> tuple
@@ -70,6 +71,6 @@ def copy_multiple(origin_directory, target_directory, excluded_filetypes):
     if contents[2] > 0:
         print "There are " + str(contents[2]) + " symbolic links in this directory!"
     for directory in directories:
-        mkdir target_directory + directory
+        mkdir(target_directory + directory)
         copy_multiple(origin_directory + directory, target_directory + directory, excluded_filetypes)
     return True

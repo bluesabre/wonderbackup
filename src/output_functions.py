@@ -5,7 +5,7 @@
 # Modified by Sean Davis on September 21, 2010
 # ---------------------------------------------------------------------------- #
 
-from backup_functions import *
+#from backup_functions import *
 
 def truncate_directory( directory, size ):
     if len(directory) > size-2:
