@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<wonderbackup>
+    <backup_locations>
+        <os family="windows" version="xp,2003">
+            <location name="Desktop">%USERPROFILE%\Desktop</location>
+            <location name="Documents">%USERPROFILE%\My Documents</location>
+            <location name="Internet Explorer">%USERPROFILE%\Favorites</location>
+            <location name="Mozilla Firefox">%USERPROFILE%\Application Data\Mozilla\Firefox</location>
+        </os>
+        <os family="windows" version="vista,2008,7">
+            <location name="Desktop">%USERPROFILE%\Desktop</location>
+            <location name="Documents">%USERPROFILE%\Documents</location>
+            <location name="Internet Explorer">%USERPROFILE%\Favorites</location>
+            <location name="Mozilla Firefox">%USERPROFILE%\AppData\Roaming\Mozilla\Firefox</location>
+            <location name="Pictures">%USERPROFILE%\Pictures</location>
+            <location name="Videos">%USERPROFILE%\Videos</location>
+        </os>
+        <os family="linux" version="ubuntu">
+            <location name="Desktop">%USERPROFILE%\Desktop</location>
+            <location name="Documents">%USERPROFILE%\Documents</location>
+            <location name="Mozilla Profiles">%USERPROFILE%\.mozilla</location>
+            <location name="Pictures">%USERPROFILE%\Pictures</location>
+            <location name="Videos">%USERPROFILE%\Videos</location>
+        </os>
+        <os family="mac" version="osx">
+            <location name="Desktop">%USERPROFILE%\Desktop</location>
+            <location name="Documents">%USERPROFILE%\Documents</location>
+            <location name="Mozilla Profiles"></location>
+            <location name="Pictures">%USERPROFILE%\Pictures</location>
+            <location name="Movies">%USERPROFILE%\Movies</location>
+        </os>
+    </backup_locations>
+
+    <exclusion_definitions>
+        <exclusion category="Music" type="extension">aac,aiff,ape,asx,au,aup,band,cdda,cust,dwd,flac,gym,la,ly,m3u,m4a,m4p,mid,mp1,mp2,mp3,mp4,mpc,msf,mus,ots,pac,pls,psf,ptb,ra,ram,rka,rm,rmj,s3m,shn,sib,smp,spc,swa,vgm,voc,vox,vqf,wav,wma,wv,xm,xspf,zpl</exclusion>
+        <exclusion category="Pictures" type="extension">art,blp,bmp,bw,cit,cpt,cut,dds,dib,djvu,egt,exif,gif,icb,icns,ico,iff,int,ithmb,jng,jp2,jpeg,jpg,lbm,max,miff,mng,msp,nitf,ota,pbm,pc1,pc2,pc3,pcf,pct,pcx,pdd,pdn,pgm,pi1,pi2,pi3,pict,pix,png,pnm,ppm,psb,psd,psp,px,pxr,qfx,raw,rgb,rle,sct,sgi,targa,tga,tif,tiff,vda,vst,xbm,xcf,xpm</exclusion>
+        <exclusion category="Videos" type="extension">3gp,aaf,asf,avchd,avi,cam,dsh,fcp,fla,flv,imovieproj,m1v,m2v,m4v,mkv,mng,mov,mp4,mpe,mpeg,mpg,mswmm,mxf,nsv,ogg,ppj,rm,roq,smi,sol,suf,svi,swf,veg,veg-bak,wmv,wrap</exclusion>
+        <exclusion category="Virtual Machines" type="extension">dsk,hdd,nvram,pvs,sav,std,vdi,vfd,vhd,vmc,vmdk,vmem,vmsd,vmsn,vmss,vmtm,vmx,vmxf,vsv,vud</exclusion>
+        <exclusion category="Temporary Files" type="filename">.DS_STORE,autorun.inf,desktop.ini,thumbs.db,~$*</exclusion>
+    </exclusion_definitions>
+</wonderbackup>
