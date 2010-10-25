@@ -4,9 +4,9 @@
 #
 # Contains the functions for the graphical user interface.
 #
-# Modified by Sean Davis on October 18, 2010
+# Modified by Sean Davis on October 24, 2010
 # ---------------------------------------------------------------------------- #
-
+from wb_xml import *
 import wx
 
 ### - The Individual Tabs -------------------------------------------------- ###
@@ -22,9 +22,16 @@ also open a preconfigured backup.'''
 
         info = wx.StaticText(self, -1, information, style=wx.ALIGN_LEFT)
 
+        local = wx.RadioButton ( self, -1, 'Local Backup', style=wx.RB_GROUP )
+        external = wx.RadioButton ( self, -1, 'External Backup' )
+        previous = wx.RadioButton ( self, -1, 'Load Saved Backup' )
+
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(info, 0, wx.ALL, 10)
+        sizer.Add(info, 1, wx.ALL, 10)
+        sizer.Add(local, 1, wx.ALL, 10)
+        sizer.Add(external, 1, wx.ALL, 10)
+        sizer.Add(previous, 1, wx.ALL, 10)
         self.SetSizer(sizer)
 
 class Tab_BackupLocations(wx.Panel):
@@ -53,6 +60,32 @@ Operating Systemhas been automatically determined.'''
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(info, 0, wx.ALL, 10)
+        self.SetSizer(sizer)
+
+class Tab_SelectLocations(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent=parent)
+
+        information = '''Please select the locations to backup.'''
+
+        info = wx.StaticText(self, -1, information, style=wx.ALIGN_LEFT)
+
+        start_checkboxes = 30
+        desktop = wx.CheckBox(self, -1, 'Desktop', (10, start_checkboxes+40))
+        documents = wx.CheckBox(self, -1, 'Documents', (10, start_checkboxes+80))
+        internetexplorer = wx.CheckBox(self, -1, 'Internet Explorer', (10, start_checkboxes+120))
+        mozilla = wx.CheckBox(self, -1, 'Mozilla Firefox', (10,start_checkboxes+160))
+        pictures = wx.CheckBox(self, -1, 'Pictures', (10, start_checkboxes+200))
+        videos = wx.CheckBox(self, -1, 'Videos', (10, start_checkboxes+240))
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(info, 0, wx.ALL, 10)
+#        sizer.Add(desktop, 0, wx.All, 10)
+#        sizer.Add(documents, 0, wx.All, 10)
+#        sizer.Add(internetexplorer, 0, wx.All, 10)
+#        sizer.Add(mozilla, 0, wx.All, 10)
+#        sizer.Add(pictures, 0, wx.All, 10)
+#        sizer.Add(videos, 0, wx.All, 10)
         self.SetSizer(sizer)
 
 class Tab_StartBackup(wx.Panel):
@@ -121,8 +154,12 @@ class WonderGUI(wx.Frame):
         tabThree = Tab_SelectUsers(notebook)
         notebook.AddPage(tabThree, "3. Select Users")
 
+        tabThree = Tab_SelectLocations(notebook)
+        notebook.AddPage(tabThree, "4. Select Locations")
+
         tabFour = Tab_StartBackup(notebook)
-        notebook.AddPage(tabFour, "4. Start Backup")
+        notebook.AddPage(tabFour, "5. Start Backup")
+        notebook.Enable(False)
       # - END NOTEBOOK ------------------------------------------------------- #
 
       # - Navigation Panel --------------------------------------------------- #

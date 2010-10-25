@@ -38,4 +38,16 @@
         <exclusion category="Virtual Machines" type="extension">dsk,hdd,nvram,pvs,sav,std,vdi,vfd,vhd,vmc,vmdk,vmem,vmsd,vmsn,vmss,vmtm,vmx,vmxf,vsv,vud</exclusion>
         <exclusion category="Temporary Files" type="filename">.DS_STORE,autorun.inf,desktop.ini,thumbs.db,~$*</exclusion>
     </exclusion_definitions>
+
+    <messages>
+        <message category="welcome" name="welcome">Welcome to Wonder Backup!</message>
+        <message category="dialog" name="file-open-error">There was an error in opening the specified file.</message>
+        <message category="dialog" name="file-save-error">There was an error in saving the specified file.  Ensure the disk is not write-protected.</message>
+        <message category="backup" name="backup-type">Please select the backup type.  'Local' refers to a backup performed on your own computer. 'External' refers to a mounted media, such as an external hard drive.  You can also open a preconfigured backup.</message>
+        <message category="backup" name="select-source">Please select the location that you would like to back up.  Select the root of the device for proper Operating System detection.</message>
+        <message category="backup" name="select-user">Please select the user account you would like to back up.</message>
+        <message category="backup" name="select-target">Please select the backup location.  You can backup to 
+external media or a computer on your network.</message>
+        <message category="backup" name="proceed">When you are certain that the settings are correct, proceed with the backup.</message>
+    </messages>
 </wonderbackup>
