@@ -80,12 +80,6 @@ class Tab_SelectLocations(wx.Panel):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(info, 0, wx.ALL, 10)
-#        sizer.Add(desktop, 0, wx.All, 10)
-#        sizer.Add(documents, 0, wx.All, 10)
-#        sizer.Add(internetexplorer, 0, wx.All, 10)
-#        sizer.Add(mozilla, 0, wx.All, 10)
-#        sizer.Add(pictures, 0, wx.All, 10)
-#        sizer.Add(videos, 0, wx.All, 10)
         self.SetSizer(sizer)
 
 class Tab_StartBackup(wx.Panel):
@@ -159,7 +153,7 @@ class WonderGUI(wx.Frame):
 
         tabFour = Tab_StartBackup(notebook)
         notebook.AddPage(tabFour, "5. Start Backup")
-        notebook.Enable(False)
+#        notebook.Enable(False)
       # - END NOTEBOOK ------------------------------------------------------- #
 
       # - Navigation Panel --------------------------------------------------- #

@@ -4,7 +4,7 @@
 #
 # Contains the functions for the XML processing.
 #
-# Modified by Sean Davis on October 24, 2010
+# Modified by Sean Davis on October 26, 2010
 # ---------------------------------------------------------------------------- #
 
 from xml.etree import ElementTree as ET
@@ -49,6 +49,20 @@ def get_backup_locations(tree):
         for j in range(len(location_list)):
             locations[i].append((location_list[j].attrib, location_list[j].text))
     return locations
+
+def simple_locations(xml_tree, family, version):
+    """simple_locations( ElementTree.tree, string family, string version ) -> list
+
+    Returns the backup locations from the xml_tree for the specified operating system family and version.
+
+    return list simple"""
+    locations = get_backup_locations(xml_tree)
+    simple = []
+    for i in range(len(locations)):
+        if locations[i][0]['family'] == family and locations[i][0]['version'] == version:
+            for j in range(1,len(locations[i])):
+                simple.append( [locations[i][j][0].values(),locations[i][j][1]] )
+    return simple
 
 def get_exclusions(tree):
     """get_exclusions( ElementTree tree ) -> list

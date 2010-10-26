@@ -130,20 +130,122 @@ def select_source(message_list, answer):
     Runs the user through the backup source selection, if necessary, returning the location as a string.
 
     return string location"""
-    # Need detect os here.
+    os = get_os()
+    local_location = '/home/'
     if answer == 1:
-        return local_location
+        return (os, local_location)
     else:
         print_message('backup', 'select-source')
 
+def select_target( message_list ):
+    """select_target( list message_list ) -> string
+
+    Returns the location that is entered by the user.  Checks for validity and adds necessary ending slashes.
+
+    return string location"""
+    print_message('backup', 'select-target')
+    location = "a"
+    while not check_valid_location(location):
+        location = raw_input("Enter the location to backup your files to:\n ")
+    if location[len(location)-1] != '/':
+        location = location + "/"
+    return location
+
+from os import listdir
+def select_user( message_list, source ):
+    """select_user( list message_list, string source ) -> string
+
+    Returns the user profile selected for backup.
+
+    return string profile"""
+    print_message('backup', 'select-user')
+    users = listdir(source)
+    for i in range(1,len(users)+1):
+        print str(i) + ". " + users[i-1]
+    ans = 0
+    while ans < 1 or ans > len(users):
+        ans = input("Please enter the number of the profile you wish to backup.")
+    return users[ans-1]
+
+def select_backup_locations( message_list, source, user, locations ):
+    """select_backup_locations( list message_list, string source, string user, list locations ) -> list
+
+    Returns the list of backup locations to be backed up.
+
+    return list answers"""
+    print_message('backup', 'select-locations')
+    answers = []
+    for i in range(len(locations)):
+        ans = ""
+        while ans != 'y' and ans != 'n':
+            ans = raw_input("Would you like to backup " + locations[i][0][0] + "?\ny or n: ")
+        if ans == 'y':
+            answers.append([locations[i][0][0],str(source) + str(user) + str(locations[i][1])])
+    return answers
+
+def select_exclusions( message_list, exclusions ):
+    """select_exclusions( list message_list, list exclusions ) -> list
+
+    Returns a list of two lists of file extensions and file names to be excluded, as selected by the user.
+
+    return list exclusions"""
+    print_message('backup', 'select-exclusions')
+    extensions = []
+    filenames = []
+    for i in range(len(exclusions)):
+        ans = ""
+        while ans != 'y' and ans != 'n':
+            ans = raw_input("Would you like to exclude " + exclusions[i][0]['category'] + "?\ny or n: ")
+        if ans == 'y':
+            ext = exclusions[i][1].rsplit(',')
+            for j in range(len(ext)):
+                if exclusions[i][0]['type'] == 'extension':
+                    extensions.append(ext[j])
+                else:
+                    filenames.append(ext[j])
+    extensions.sort()
+    filenames.sort()
+    return [extensions, filenames]
+
+
+def start_backup( message_list, backup_type, source_directory, target_directory, user, backup_locations, exclusions ):
+    """start_backup( list message_list, int backup_type, string source_directory, string target_directory, string user, list backup_locations, list exclusions )
+
+    Confirms that all settings are correct and begins the backup program."""
+    print_message('backup', 'proceed')
+    print "Backup Details:"
+    if backup_type == 1:
+        print "Backup Type: Local"
+    elif backup_type == 2:
+        print "Backup Type: External"
+    print "Source Directory: " + str(source_directory[1])
+    print "Target Directory: " + str(target_directory)
+    print "User: " + str(user)
+    print "Locations to be backed up:\n"
+    for i in (range(len(backup_locations))):
+        print " " + backup_locations[i][1]
+    print "File Exclusions:\n " + str(exclusions[0]) + "\n " + str(exclusions[1])
+    raw_input("Press enter to proceed.")
+    for i in range(len(backup_locations)):
+        mkdir(target_directory + backup_locations[i][0])
+        copy_multiple(backup_locations[i][1], target_directory+backup_locations[i][0], exclusions[0])
+    
+
 #----------------------------------------------------------------------
 if __name__ == "__main__":
+    """Main function, called when issuing a command 'python command'"""
     xml_doc = readXML("wonderbackup.xml")
-    locations = get_backup_locations(xml_doc)
+    locations = get_os_backup_locations(xml_doc)
     exclusions = get_exclusions(xml_doc)
     messages = get_messages(xml_doc)
 
     welcome_message(messages)
 
-    ans = backup_type(messages)
-    select_source(messages, ans)
+    b_type = backup_type(messages)
+    source = select_source(messages, b_type)
+    target = select_target( messages )
+    user = select_user( messages, source[1] )
+    b_locations = select_backup_locations( messages, source[1], user, locations )
+    exclude = select_exclusions( messages, exclusions )
+    start_backup(messages, b_type, source, target, user, b_locations, exclude )
+    

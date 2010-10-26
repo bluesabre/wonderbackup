@@ -16,11 +16,11 @@
             <location name="Videos">%USERPROFILE%\Videos</location>
         </os>
         <os family="linux" version="ubuntu">
-            <location name="Desktop">%USERPROFILE%\Desktop</location>
-            <location name="Documents">%USERPROFILE%\Documents</location>
-            <location name="Mozilla Profiles">%USERPROFILE%\.mozilla</location>
-            <location name="Pictures">%USERPROFILE%\Pictures</location>
-            <location name="Videos">%USERPROFILE%\Videos</location>
+            <location name="Desktop">/Desktop</location>
+            <location name="Documents">/Documents</location>
+            <location name="Mozilla Profiles">/.mozilla</location>
+            <location name="Pictures">/Pictures</location>
+            <location name="Videos">/Videos</location>
         </os>
         <os family="mac" version="osx">
             <location name="Desktop">%USERPROFILE%\Desktop</location>
@@ -48,6 +48,8 @@
         <message category="backup" name="select-user">Please select the user account you would like to back up.</message>
         <message category="backup" name="select-target">Please select the backup location.  You can backup to 
 external media or a computer on your network.</message>
+        <message category="backup" name="select-locations">Please select the locations you would like to backup.</message>
+        <message category="backup" name="select-exclusions">Please select any exclusion list you would like to use.</message>
         <message category="backup" name="proceed">When you are certain that the settings are correct, proceed with the backup.</message>
     </messages>
 </wonderbackup>

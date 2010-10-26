@@ -4,9 +4,10 @@
 #
 # Contains the functions for the operating system dependent tasks.
 #
-# Modified by Sean Davis on October 18, 2010
+# Modified by Sean Davis on October 26, 2010
 # ---------------------------------------------------------------------------- #
 
+from wb_xml import *
 from platform import uname
 from os import getenv
 from os.path import isdir
@@ -34,28 +35,42 @@ def check_valid_location( location ):
     return bool"""
     if isdir(location):
         return True
+
+def get_os_users_location( source ):
+    """get_os_users_locations( string source ) -> string
+
+    Returns the location of the profiles, specific per operating system.
+
+    return string location"""
+    if source == 'local':
+        os = get_os()
+        if os[0] == "Windows":
+            if os[1] == "Vista" or os[1] == "2008" or os[1] == "7":
+                return "C:\\Users\\"
+            else:
+                return "C:\\Documents and Settings\\"
+        elif os[0] == "Linux":
+            return "/home/"
+        else: # Macs
+            return "/Users/"
+    else:
+        print "External backups are not yet supported."
+        return False
 		
-def get_user_locations( username ):
-    """get_user_locations( string username )
+def get_os_backup_locations( xml_file ):
+    """get_os_backup_locations( string username )
 
     Returns the proper backup locations, specific per OS.
 
     return list of tuples"""
+    xml_doc = xml_file
+    xml_locations = get_backup_locations(xml_doc)
     if get_os()[0] == "Windows":
-        if get_os()[1] == "Vista" or get_os()[1] == "7":
-            profile = "C:\\Users\\" + username + "\\"
-            locations = [("Desktop", profile + "Desktop\\"), ("Documents", profile + "Documents\\"), ("Favorites", profile + "Favorites\\"), ("Firefox Profiles", profile + "AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\"), ("Music", profile + "Music\\"), ("Pictures", profile + "Pictures\\"), ("Videos", profile + "Videos\\")]
+        if get_os()[1] == "Vista" or get_os()[1] == "7" or get_os()[1] == '2008':
+            return simple_locations(xml_doc, 'windows', 'vista,2008,7')
         else:
-            profile = "C:\\Documents and Settings\\" + username + "\\"
-            locations = [("Desktop", profile + "Desktop\\"), ("Favorites", profile + "Favorites"), ("Firefox Profiles", profile + "Application Data\\Mozilla\\Firefox\\Profiles\\"), ("My Documents", profile + "My Documents\\")]
+            return simple_locations(xml_doc, 'windows', 'xp,2003')
     elif get_os()[0] == "Linux":
-        profile = "/home/" + username + "/"
-        locations = [("Desktop", profile + "Desktop/"), ("Documents", profile + "Documents/"), ("Music", profile + "Music/"), ("Mozilla (Firefox and Thunderbird) Profiles", profile + ".mozilla/"), ("Pictures", profile + "Pictures/"), ("Videos", profile + "Videos/")]
+        return simple_locations(xml_doc, 'linux', 'ubuntu')
     else:
-        profile = "/Users/" + username + "/"
-        locations = [("Desktop", profile + "Desktop/"), ("Documents", profile + "Documents/"), ("Movies", profile + "Movies/"), ("Music", profile + "Music/"), ("Pictures", profile + "Pictures/")]
-    all_locations = []
-    for each in locations:
-        if isdir(each[1]):
-            all_locations.append(each)
-    return all_locations
+        return simple_locations(xml_doc, 'mac', 'osx')

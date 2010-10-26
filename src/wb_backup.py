@@ -4,7 +4,7 @@
 #
 # Contains the functions used in the backup process.
 #
-# Modified by Sean Davis on October 18, 2010
+# Modified by Sean Davis on October 26, 2010
 # ---------------------------------------------------------------------------- #
 
 from shutil import copy2
@@ -74,7 +74,7 @@ def copy_multiple(origin_directory, target_directory, excluded_filetypes):
         target_directory += '/'
     contents = get_contents(origin_directory)
     files = remove_excluded(contents[0], excluded_filetypes)
-    terminal_output(origin_directory, files)
+#    terminal_output(origin_directory, files)
     directories = contents[1]
     if contents[2] > 0:
         print "There are " + str(contents[2]) + " symbolic links in this directory!"
