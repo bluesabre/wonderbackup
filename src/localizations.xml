@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<localizations>
+    <locale lang="en">
+    
+        <message category="about" name="description">Wonder Backup is an open source, Python-powered, operating system independent backup solution for use in scenarios from end-users to enterprise solutions.</message>
+        <message category="about" name="license">Wonder Backup is free software, though licensing is a difficult legal decision that will be left for a later point in time.
+Ultimately, I wish for this software to be free for anyone and everyone, and hope to one day find a suitable license.</message>
+        <message category="about" name="version">0.1 Alpha</message>
+
+        <message category="backup" name="backup-type">Please select the backup type.  'Local' refers to a backup
+performed on your own computer. 'External' refers to a mounted 
+media, such as an external hard drive.  You can also open a 
+preconfigured backup.
+</message>
+        <message category="backup" name="select-source">Please select the location that you would like to back up.  
+Select the root of the device for proper Operating System 
+detection.
+</message>
+        <message category="backup" name="select-user">Please select the user account you would like to back up.
+</message>
+        <message category="backup" name="select-target">Please select the backup location.  You can backup to 
+external media or a computer on your network.
+</message>
+        <message category="backup" name="select-locations">Please select the locations you would like to backup.
+</message>
+        <message category="backup" name="select-exclusions">Please select any exclusion list you would like to use.
+</message>
+        <message category="backup" name="proceed">Press ENTER to proceed with the Backup.
+</message> 
+        
+        <message category="backup-option" name="local">Local Backup</message>
+        <message category="backup-option" name="external">External Backup</message>
+        <message category="backup-option" name="preconfigured">Load Preconfigured Backup</message>
+        
+        <message category="dialog" name="file-open-error">There was an error in opening the specified file.</message>
+        <message category="dialog" name="file-save-error">There was an error in saving the specified file.  Ensure the disk is not write-protected.</message>
+    
+        <message category="prompt" name="enter-selection">Enter your selection as a number: </message>
+        <message category="prompt" name="enter-location">Please enter a valid location to store your backup: </message>
+        <message category="prompt" name="select-profile">Please select the profile you wish to back up: </message>
+        <message category="prompt" name="to-backup">Would you like to backup </message>
+        <message category="prompt" name="to-exclude">Would you like to exclude </message>
+        
+        <message category="summary" name="details">Backup Details:</message>
+        <message category="summary" name="type">Backup Type:</message>
+        <message category="summary" name="source">Source Directory:</message>
+        <message category="summary" name="target">Target Directory:</message>
+        <message category="summary" name="profile">User Profile:</message>
+        <message category="summary" name="locations">Locations to be backed up:</message>
+        <message category="summary" name="exclusions">File Exclusions:</message>
+        <message category="summary" name="proceed">If you are certain all settings are correct, proceed with the backup.</message>
+    
+        <message category="welcome" name="welcome">Welcome to Wonder Backup!
+
+This is a prerelease version.  Use at your own risk.
+</message>
+
+    </locale>
+
+</localizations>
