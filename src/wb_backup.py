@@ -4,7 +4,7 @@
 #
 # Contains the functions used in the backup process.
 #
-# Modified by Sean Davis on October 26, 2010
+# Modified by Sean Davis on November 2, 2010
 # ---------------------------------------------------------------------------- #
 
 from shutil import copy2
@@ -84,3 +84,56 @@ def copy_multiple(origin_directory, target_directory, excluded_filetypes):
         mkdir(target_directory + directory)
         copy_multiple(origin_directory + directory, target_directory + directory, excluded_filetypes)
     return True
+
+def get_files_for_backup( source_directory, excluded_filetypes ):
+    """get_files_for_backup( string source_directory, list excluded_filetypes ) -> list
+
+    Recursively traverses the directory structure from source_directory and returns
+    in an ordered list, the absolute locations for each file that is not of an
+    excluded_filetype.
+
+    Return list absolute_files"""
+    if source_directory[len(source_directory)-1] != '/':
+        source_directory += '/'
+    contents = get_contents(source_directory)
+    files = remove_excluded(contents[0], excluded_filetypes)
+    absolute_files = []
+    for i in range(len(files)):
+        absolute_files.append( source_directory + files[i] )
+    directories = contents[1]
+    for directory in directories:
+        absolute_files += get_files_for_backup(source_directory + directory, excluded_filetypes) 
+    absolute_files.sort()
+    return absolute_files
+
+def make_folders_for_backup( source_directory, target_directory ):
+    """make_folders_for_backup( string source_directory, string target_directory )
+
+    Recreates the folder structure of source_directory in target_directory.
+
+    Return True"""
+    if source_directory[len(source_directory)-1] != '/':
+        source_directory += '/'
+    if target_directory[len(target_directory)-1] != '/':
+        target_directory += '/'
+    contents = get_contents(source_directory)
+    directories = contents[1]
+    for directory in directories:
+        mkdir(target_directory + directory)
+        make_folders_for_backup( source_directory + directory, target_directory + directory )
+    return True
+
+def new_location_files( source_directory, target_directory, files ):
+    """new_location_files( string source_directory, string target_directory, list files ) ->: list
+
+    Returns a list of the absolute locations for the newly created files.
+
+    Return list newfiles"""
+    if source_directory[len(source_directory)-1] != '/':
+        source_directory += '/'
+    if target_directory[len(target_directory)-1] != '/':
+        target_directory += '/'
+    newfiles = []
+    for i in files:
+        newfiles.append( i.replace(source_directory,target_directory) )
+    return newfiles
