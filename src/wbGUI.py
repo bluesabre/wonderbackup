@@ -1,37 +1,37 @@
 # ---------------------------------------------------------------------------- #
 # Wonder Backup - http://wonderbackup.sourceforge.net/
-# wonder_gui.py
+# wbGUI.py
 #
 # Contains the functions for the graphical user interface.
 #
-# Modified by Sean Davis on November 2, 2010
+# Modified by Sean Davis on November 10, 2010
 # ---------------------------------------------------------------------------- #
-from wb_xml import *
+
+from wbXML import *
 import wx
-from wb_backup import *
-from wb_file import *
-from wb_os import *
-from wb_xml import *
+from wbBackup import *
+from wbFile import *
+from wbOS import *
 
 
-class Notebook_Tab(wx.Panel):
-    """ This is the generalized Notebook tab.  It has since been depracated and 
-    will soon be removed."""
-    def __init__(self, parent, message):
-        wx.Panel.__init__(self, parent=parent)
+#class Notebook_Tab(wx.Panel):
+#    """ This is the generalized Notebook tab.  It has since been depracated #and 
+#    will soon be removed."""
+#    def __init__(self, parent, message):
+#        wx.Panel.__init__(self, parent=parent)
 
-        info = wx.StaticText(self, -1, message, style=wx.ALIGN_LEFT)
-        self.extra = {}
+#        info = wx.StaticText(self, -1, message, style=wx.ALIGN_LEFT)
+#        self.extra = {}
 
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(info, 0.5, wx.ALL, 10)
-        self.SetSizer(self.sizer)
+#        self.sizer = wx.BoxSizer(wx.VERTICAL)
+#        self.sizer.Add(info, 0.5, wx.ALL, 10)
+#        self.SetSizer(self.sizer)
 
-    def add_to_sizer(self, what, number=1, how=wx.ALL, size=10):
-        """def add_to_sizer(anything what, int number, spacing how, int size)
+#    def add_to_sizer(self, what, number=1, how=wx.ALL, size=10):
+#        """def add_to_sizer(anything what, int number, spacing how, int size)
     
-        Adds an item what to the sizer of the Notebook."""
-        self.sizer.Add(what, number, how, size)
+#        Adds an item what to the sizer of the Notebook."""
+#        self.sizer.Add(what, number, how, size)
 
 class Tab_Welcome(wx.Panel):
     """Tab_Welcome( parent )
@@ -533,10 +533,10 @@ class WonderGUI(wx.Frame):
 
         language = 'en'
         settings = readXML("wonderbackup.xml")
-        messages = get_messages(readXML("localizations.xml"), language)
+        messages = getMessages(readXML("localizations.xml"), language)
 # Messages are in the format (backup_wizard, backup_options, dialogs, prompts, summary, welcome, about)
-        locations = get_os_backup_locations(settings)
-        exclusions = get_exclusions(settings)
+#        locations = get_os_backup_locations(settings)
+        exclusions = getExclusions(settings)
 
       # - Notebook (Tabs) ---------------------------------------------------- # 
         notebook = wx.Notebook(panel, style=wx.NB_LEFT)
@@ -561,7 +561,7 @@ class WonderGUI(wx.Frame):
         tabSix = Tab_SelectExclusions(notebook, messages, 30, 30)
         notebook.AddPage(tabSix, "6. Select Exclusions")
 # Start Backup Tab
-        tabSeven = Notebook_Tab(notebook, get_message(messages[0],'proceed'))
+        tabSeven = Notebook_Tab(notebook, messages)
         notebook.AddPage(tabSeven, "7. Start Backup")
         for i in range(1,8):
             notebook.GetPage(i).Hide()

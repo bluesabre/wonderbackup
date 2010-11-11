@@ -8,8 +8,8 @@
             <location name="mozilla">Application Data/Mozilla/Firefox/</location>
         </os>
         <os family="windows" version="vista,2008,7">
-            <location name="desktop">/Desktop</location>
-            <location name="documents">/Documents</location>
+            <location name="desktop">Desktop/</location>
+            <location name="documents">Documents/</location>
             <location name="internetexplorer">Favorites/</location>
             <location name="mozilla">AppData/Roaming/Mozilla/Firefox/</location>
             <location name="pictures">Pictures/</location>
@@ -32,10 +32,10 @@
     </backup_locations>
 
     <exclusion_definitions>
-        <exclusion category="Music" type="extension">aac,aiff,ape,asx,au,aup,band,cdda,cust,dwd,flac,gym,la,ly,m3u,m4a,m4p,mid,mp1,mp2,mp3,mp4,mpc,msf,mus,ots,pac,pls,psf,ptb,ra,ram,rka,rm,rmj,s3m,shn,sib,smp,spc,swa,vgm,voc,vox,vqf,wav,wma,wv,xm,xspf,zpl</exclusion>
-        <exclusion category="Pictures" type="extension">art,blp,bmp,bw,cit,cpt,cut,dds,dib,djvu,egt,exif,gif,icb,icns,ico,iff,int,ithmb,jng,jp2,jpeg,jpg,lbm,max,miff,mng,msp,nitf,ota,pbm,pc1,pc2,pc3,pcf,pct,pcx,pdd,pdn,pgm,pi1,pi2,pi3,pict,pix,png,pnm,ppm,psb,psd,psp,px,pxr,qfx,raw,rgb,rle,sct,sgi,targa,tga,tif,tiff,vda,vst,xbm,xcf,xpm</exclusion>
-        <exclusion category="Videos" type="extension">3gp,aaf,asf,avchd,avi,cam,dsh,fcp,fla,flv,imovieproj,m1v,m2v,m4v,mkv,mng,mov,mp4,mpe,mpeg,mpg,mswmm,mxf,nsv,ogg,ppj,rm,roq,smi,sol,suf,svi,swf,veg,veg-bak,wmv,wrap</exclusion>
-        <exclusion category="Virtual Machines" type="extension">dsk,hdd,nvram,pvs,sav,std,vdi,vfd,vhd,vmc,vmdk,vmem,vmsd,vmsn,vmss,vmtm,vmx,vmxf,vsv,vud</exclusion>
-        <exclusion category="Temporary Files" type="filename">.DS_STORE,autorun.inf,desktop.ini,thumbs.db,~$*</exclusion>
+        <exclusion category="Music">*.aac,*.aiff,*.ape,*.asx,*.au,*.aup,*.band,*.cdda,*.cust,*.dwd,*.flac,*.gym,*.la,*.ly,*.m3u,*.m4a,*.m4p,*.mid,*.mp1,*.mp2,*.mp3,*.mp4,*.mpc,*.msf,*.mus,*.ots,*.pac,*.pls,*.psf,*.ptb,*.ra,*.ram,*.rka,*.rm,*.rmj,*.s3m,*.shn,*.sib,*.smp,*.spc,*.swa,*.vgm,*.voc,*.vox,*.vqf,*.wav,*.wma,*.wv,*.xm,*.xspf,*.zpl</exclusion>
+        <exclusion category="Pictures">*.art,*.blp,*.bmp,*.bw,*.cit,*.cpt,*.cut,*.dds,*.dib,*.djvu,*.egt,*.exif,*.gif,*.icb,*.icns,*.ico,*.iff,*.int,*.ithmb,*.jng,*.jp2,*.jpeg,*.jpg,*.lbm,*.max,*.miff,*.mng,*.msp,*.nitf,*.ota,*.pbm,*.pc1,*.pc2,*.pc3,*.pcf,*.pct,*.pcx,*.pdd,*.pdn,*.pgm,*.pi1,*.pi2,*.pi3,*.pict,*.pix,*.png,*.pnm,*.ppm,*.psb,*.psd,*.psp,*.px,*.pxr,*.qfx,*.raw,*.rgb,*.rle,*.sct,*.sgi,*.targa,*.tga,*.tif,*.tiff,*.vda,*.vst,*.xbm,*.xcf,*.xpm</exclusion>
+        <exclusion category="Videos">*.3gp,*.aaf,*.asf,*.avchd,*.avi,*.cam,*.dsh,*.fcp,*.fla,*.flv,*.imovieproj,*.m1v,*.m2v,*.m4v,*.mkv,*.mng,*.mov,*.mp4,*.mpe,*.mpeg,*.mpg,*.mswmm,*.mxf,*.nsv,*.ogg,*.ppj,*.rm,*.roq,*.smi,*.sol,*.suf,*.svi,*.swf,*.veg,*.veg-bak,*.wmv,*.wrap</exclusion>
+        <exclusion category="Virtual Machines">*.dsk,*.hdd,*.nvram,*.pvs,*.sav,*.std,*.vdi,*.vfd,*.vhd,*.vmc,*.vmdk,*.vmem,*.vmsd,*.vmsn,*.vmss,*.vmtm,*.vmx,*.vmxf,*.vsv,*.vud</exclusion>
+        <exclusion category="Temporary Files">.DS_STORE,autorun.inf,desktop.ini,thumbs.db,~$*</exclusion>
     </exclusion_definitions>
 </wonderbackup>

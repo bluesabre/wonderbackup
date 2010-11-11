@@ -32,6 +32,15 @@ external media or a computer on your network.
         <message category="backup-option" name="external">External Backup</message>
         <message category="backup-option" name="preconfigured">Load Preconfigured Backup</message>
         
+        <message category="backup-progress" name="category-backup">Backing up </message>
+        <message category="backup-progress" name="getting-files">Getting files for Backup from </message>
+        <message category="backup-progress" name="found">Found </message>
+        <message category="backup-progress" name="files-to-backup"> files to backup.</message>
+        <message category="backup-progress" name="building-structure">Building Directory Structure in </message>
+        <message category="backup-progress" name="configuring-target">Configuring Target Filenames...</message>
+        <message category="backup-progress" name="copying-file">Copying file </message>
+        <message category="backup-progress" name="of"> of </message>
+        
         <message category="dialog" name="file-open-error">There was an error in opening the specified file.</message>
         <message category="dialog" name="file-save-error">There was an error in saving the specified file.  Ensure the disk is not write-protected.</message>
     
