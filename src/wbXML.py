@@ -4,11 +4,12 @@
 #
 # Contains the functions for the XML processing.
 #
-# Modified by Sean Davis on November 11, 2010
+# Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
 from xml.etree import ElementTree as ET
 import os
+
 
 def readXML(filename):
     """readXML( string filename ) -> ElementTree
@@ -72,7 +73,6 @@ def getMessages( xmldoc, language ):
                 if j == 0:
                     dictionary = {}
                     previousCategory = allLanguages[i][j].attrib.get('category')
-                    print previousCategory
                 if allLanguages[i][j].attrib.get('category') != previousCategory:
                     messageDict[allLanguages[i][j-1].attrib.get('category')] = dictionary
                     dictionary = {}

@@ -4,11 +4,12 @@
 #
 # Contains the functions for the file-related tasks.
 #
-# Modified by Sean Davis on November 11, 2010
+# Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
 import os
 import datetime
+
 
 def readableSize( n_bytes ):
     """readableSize( long int n_bytes ) -> size
@@ -38,7 +39,8 @@ def readableSize( n_bytes ):
             return size + " " + value[1]
         else:
             size += value[0][i]
-    return size + " " + value[1]
+    return value[0] + " " + value[1]
+
 
 def getAttributes( filename ):
     """getAttributes( string filename ) -> dict

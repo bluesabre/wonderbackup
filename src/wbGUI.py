@@ -4,35 +4,19 @@
 #
 # Contains the functions for the graphical user interface.
 #
-# Modified by Sean Davis on November 10, 2010
+# Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
-from wbXML import *
 import wx
+from wbXML import *
 from wbBackup import *
 from wbFile import *
 from wbOS import *
 
-
-#class Notebook_Tab(wx.Panel):
-#    """ This is the generalized Notebook tab.  It has since been depracated #and 
-#    will soon be removed."""
-#    def __init__(self, parent, message):
-#        wx.Panel.__init__(self, parent=parent)
-
-#        info = wx.StaticText(self, -1, message, style=wx.ALIGN_LEFT)
-#        self.extra = {}
-
-#        self.sizer = wx.BoxSizer(wx.VERTICAL)
-#        self.sizer.Add(info, 0.5, wx.ALL, 10)
-#        self.SetSizer(self.sizer)
-
-#    def add_to_sizer(self, what, number=1, how=wx.ALL, size=10):
-#        """def add_to_sizer(anything what, int number, spacing how, int size)
-    
-#        Adds an item what to the sizer of the Notebook."""
-#        self.sizer.Add(what, number, how, size)
-
+        
+### --- Backup Progress Notebook Tabs -------------------------------------- ###
+        
+# ------ 1. Welcome Tab ------------------------------------------------------ #
 class Tab_Welcome(wx.Panel):
     """Tab_Welcome( parent )
 
@@ -44,39 +28,17 @@ class Tab_Welcome(wx.Panel):
         png = wx.Image('Icon.png', wx.BITMAP_TYPE_ANY).ConvertToBitmap()
         image = wx.StaticBitmap(self, -1, png, (10, 5), (png.GetWidth(), png.GetHeight()))
 
-        self.notes = wx.Button(self, label="Release Notes")
-        self.Bind(wx.EVT_BUTTON, self.release_notes(parent, messages), self.notes)
-
-        info = wx.StaticText(self, -1, get_message(messages[5], 'welcome'), style=wx.ALIGN_LEFT)
+        info = wx.StaticText(self, -1, messages['welcome']['welcome'], style=wx.ALIGN_LEFT)
         self.extra = {}
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(image, 0.5, wx.ALL, 10)
         self.sizer.Add(info, 0.5, wx.ALL, 10)
-        self.sizer.Add(self.notes, 0.5, wx.ALL, 10)
         self.SetSizer(self.sizer)
+# ---------------------------------------------------------------------------- #
+            
 
-    def release_notes(self, parent, messages):
-        """release_notes(parent, list messages)
-
-        Opens a dialog box that contains the release notes.  Has a close button
-        to return to the program."""
-        def onclick_notes(event):
-            dialog = wx.Dialog(None, -1, "Release Notes", size=(450, 250))
-
-            sizer = wx.BoxSizer(wx.VERTICAL)
-
-            textbox = wx.TextCtrl(dialog, -1, '', style = wx.TE_MULTILINE | wx.TE_READONLY)
-
-            closeButton = wx.Button(dialog, -1, 'Close', size=(70, 30))
-
-            sizer.Add(textbox, 1, wx.EXPAND | wx.TOP | wx.RIGHT | wx.LEFT, 10)
-            sizer.Add(closeButton, 0.5, wx.ALIGN_RIGHT, 10)
-
-            dialog.SetSizer(sizer)
-            dialog.ShowModal()
-        return onclick_notes
-
+# ------ 2. Select Backup Type Tab ------------------------------------------- #
 class Tab_SelectBackupType(wx.Panel):
     """Tab_SelectBackupType( parent, list messages)
 
@@ -87,17 +49,17 @@ class Tab_SelectBackupType(wx.Panel):
     def __init__(self, parent, messages):
         wx.Panel.__init__(self, parent=parent)
 
-        info = wx.StaticText(self, -1, get_message(messages[0],'backup-type'), style=wx.ALIGN_LEFT)
+        info = wx.StaticText(self, -1, messages['backup']['backup-type'], style=wx.ALIGN_LEFT)
 
-#        self.local = wx.RadioButton ( self, -1, get_message(messages[1],'local'), style=wx.RB_GROUP )
-        self.external = wx.RadioButton ( self, -1, get_message(messages[1],'external'), style=wx.RB_GROUP )
-#        self.preconfigured = wx.RadioButton ( self, -1, get_message(messages[1],'preconfigured') )
+        self.local = wx.RadioButton ( self, -1, messages['backup-option']['local'], style=wx.RB_GROUP )
+        self.external = wx.RadioButton ( self, -1, messages['backup-option']['external'] )
+        self.preconfigured = wx.RadioButton ( self, -1, messages['backup-option']['preconfigured'] )
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(info, 0.5, wx.ALL, 10)
-#        self.sizer.Add(self.local, 1, wx.ALL, 10)
+        self.sizer.Add(self.local, 1, wx.ALL, 10)
         self.sizer.Add(self.external, 1, wx.ALL, 10)
-#        self.sizer.Add(self.preconfigured, 1, wx.ALL, 10)
+        self.sizer.Add(self.preconfigured, 1, wx.ALL, 10)
         self.SetSizer(self.sizer)
 
     def getSelection(self):
@@ -107,13 +69,16 @@ class Tab_SelectBackupType(wx.Panel):
         are disabled above, they must be disabled here as well.
 
         return string"""
-#        if self.local.GetValue() == True:
-#            return 'local'
+        if self.local.GetValue() == True:
+            return 'local'
         if self.external.GetValue() == True:
             return 'external'
-#        if self.preconfigured.GetValue() == True:
-#            return 'preconfigured'
+        if self.preconfigured.GetValue() == True:
+            return 'preconfigured'
+# ---------------------------------------------------------------------------- #
 
+
+# ------ 3. Select Source Location Tab --------------------------------------- #
 class Tab_SelectSourceLocation(wx.Panel):
     """Tab_SelectSourceLocation( parent, messages ):
 
@@ -124,11 +89,11 @@ class Tab_SelectSourceLocation(wx.Panel):
     def __init__(self, parent, messages):
         wx.Panel.__init__(self, parent=parent)
 
-        info = wx.StaticText(self, -1, get_message(messages[0],'select-source'), style=wx.ALIGN_LEFT)
+        info = wx.StaticText(self, -1, messages['backup']['select-source'], style=wx.ALIGN_LEFT)
 
         self.selection = wx.StaticText(self, -1, "", style=wx.ALIGN_LEFT)
         self.detected_os_text = wx.StaticText(self, -1, "", style=wx.ALIGN_LEFT)
-        self.detected_os = ""
+        self.detected_os = {}
     
         self.browse = wx.Button(self, label="Browse...")
 
@@ -152,17 +117,33 @@ class Tab_SelectSourceLocation(wx.Panel):
             dialog = wx.DirDialog ( self, style = wx.OPEN )
             if dialog.ShowModal() == wx.ID_OK:
                 self.selection.SetLabel(dialog.GetPath())
-                detected = detect_os(dialog.GetPath())
+                detected = detectOS(dialog.GetPath())
                 if detected == False:
                     self.detected_os_text.SetLabel("No Operating System detected at this location.")
 
                 else:
-                    self.detected_os_text.SetLabel(str(detected[1]) + " Detected.")
-                    self.detected_os = detected[0]
+                    self.detected_os_text.SetLabel(str(detected['readable']) + " Detected.")
+                    self.detected_os = detected
                     parent.GetPage(4).clear_choices()
-                    parent.GetPage(4).populate_choices(get_users(str(self.selection.Label) + "/", self.detected_os))
+                    parent.GetPage(4).populate_choices(getProfiles(dialog.GetPath()))
                 dialog.Destroy()
         return onclick_browse
+        
+    def setLocal(self, parent):
+        """setLocal( parent )
+        
+        Sets all related fields to their proper settings as if the user had
+        selected the local settings themselves."""
+        detected = detectOS()
+        self.detected_os_text.SetLabel(str(detected['readable']) + " Detected.")
+        self.detected_os = detected
+        parent.GetPage(4).clear_choices()
+        if detected['family'] == 'windows':
+            self.selection.SetLabel('C:\\')
+            parent.GetPage(4).populate_choices(getProfiles('C:\\'))
+        else:
+            self.selection.SetLabel('/')
+            parent.GetPage(4).populate_choices(getProfiles('/'))
 
     def getSelection(self):
         """getSelection() -> string
@@ -179,7 +160,10 @@ class Tab_SelectSourceLocation(wx.Panel):
 
         return list operating_system"""
         return self.detected_os
+# ---------------------------------------------------------------------------- #
 
+
+# ------ 4. Select Target Location Tab --------------------------------------- #
 class Tab_SelectTargetLocation(wx.Panel):
     """Tab_SelectTargetLocation( parent, list messages )
 
@@ -189,7 +173,7 @@ class Tab_SelectTargetLocation(wx.Panel):
     def __init__(self, parent, messages):
         wx.Panel.__init__(self, parent=parent)
 
-        info = wx.StaticText(self, -1, get_message(messages[0],'select-target'), style=wx.ALIGN_LEFT)
+        info = wx.StaticText(self, -1, messages['backup']['select-target'], style=wx.ALIGN_LEFT)
 
         self.selection = wx.StaticText(self, -1, "", style=wx.ALIGN_LEFT)
         self.freespace = wx.StaticText(self, -1, "", style=wx.ALIGN_LEFT)
@@ -226,8 +210,10 @@ class Tab_SelectTargetLocation(wx.Panel):
 
         return string directory"""
         return str(self.selection.GetLabel())
+# ---------------------------------------------------------------------------- #
 
 
+# ------ 5. Select User Profile Tab ------------------------------------------ #
 class Tab_SelectUser(wx.Panel):
     """Tab_SelectUser( parent, list messages ):
 
@@ -236,7 +222,7 @@ class Tab_SelectUser(wx.Panel):
     def __init__(self, parent, messages):
         wx.Panel.__init__(self, parent=parent)
 
-        info = wx.StaticText(self, -1, get_message(messages[0],'select-user'), style=wx.ALIGN_LEFT)
+        info = wx.StaticText(self, -1, messages['backup']['select-user'], style=wx.ALIGN_LEFT)
         
         self.combobox = wx.ComboBox(self, -1, size=wx.Size(250, 30), style=wx.CB_READONLY, choices = [])
         self.Bind(wx.EVT_COMBOBOX, self.set_possible_locations(parent), self.combobox)
@@ -257,18 +243,18 @@ class Tab_SelectUser(wx.Panel):
             source = parent.GetPage(2).getSelection()
             os = parent.GetPage(2).getOS()
             user = self.getSelection()
-            user_directory = get_users_location( source, os ) + user + "/"
-            locations = simple_locations(readXML("wonderbackup.xml"), os[0], os[1])
+            user_directory = dirString( getProfilesFolder( source ) + user )
+            locations = getLocations(readXML('wonderbackup.xml'), os['family'], os['version'])
             locations_tab.enable_all()
-            if os[0] != 'windows':
+            if os['family'] != 'windows':
                 locations_tab.disable('internetexplorer')
-            if os[0] == 'windows' and os[1] == 'xp,2003':
+            if os['family'] == 'windows' and os['version'] == 'xp,2003':
                 locations_tab.disable('music')
                 locations_tab.disable('pictures')
                 locations_tab.disable('videos')
-            for i in range(len(locations)):
-                if check_valid_location( user_directory + locations[i][1] ) != True:
-                    locations_tab.disable(locations[i][0][0])
+            for key in locations.keys():
+                if checkLocation( user_directory + locations[key] ) != True:
+                    locations_tab.disable(key)
         return onselect_user
 
     def populate_choices(self, choices):
@@ -291,8 +277,10 @@ class Tab_SelectUser(wx.Panel):
 
         return string"""
         return str(self.combobox.GetValue())
+# ---------------------------------------------------------------------------- #
 
 
+# ------ 6. Select Locations for Backup Tab ---------------------------------- #
 class Tab_SelectLocations(wx.Panel):
     """Tab_SelectLocations( parent, list messages, int start_location, int inbetween )
 
@@ -302,15 +290,16 @@ class Tab_SelectLocations(wx.Panel):
     def __init__(self, parent, messages, start_location, inbetween):
         wx.Panel.__init__(self, parent=parent)
 
-        info = wx.StaticText(self, -1, get_message(messages[0],'select-locations'), style=wx.ALIGN_LEFT)
+        info = wx.StaticText(self, -1, messages['backup']['select-locations'], style=wx.ALIGN_LEFT)
 
         start_checkboxes = start_location
         self.desktop = wx.CheckBox(self, -1, 'Desktop', (10, start_checkboxes+inbetween))
         self.documents = wx.CheckBox(self, -1, 'Documents', (10, start_checkboxes+inbetween*2))
         self.internetexplorer = wx.CheckBox(self, -1, 'Internet Explorer', (10, start_checkboxes+inbetween*3))
         self.mozilla = wx.CheckBox(self, -1, 'Mozilla Firefox', (10,start_checkboxes+inbetween*4))
-        self.pictures = wx.CheckBox(self, -1, 'Pictures', (10, start_checkboxes+inbetween*5))
-        self.videos = wx.CheckBox(self, -1, 'Videos', (10, start_checkboxes+inbetween*6))
+        self.music = wx.CheckBox(self, -1, 'Music', (10,start_checkboxes+inbetween*5))
+        self.pictures = wx.CheckBox(self, -1, 'Pictures', (10, start_checkboxes+inbetween*6))
+        self.videos = wx.CheckBox(self, -1, 'Videos', (10, start_checkboxes+inbetween*7))
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(info, 0, wx.ALL, 10)
@@ -328,6 +317,8 @@ class Tab_SelectLocations(wx.Panel):
             self.internetexplorer.Disable()
         elif item == 'mozilla':
             self.mozilla.Disable()
+        elif item == 'music':
+            self.music.Disable()
         elif item == 'pictures':
             self.pictures.Disable()
         elif item == 'videos':
@@ -343,6 +334,7 @@ class Tab_SelectLocations(wx.Panel):
         self.documents.Enable()
         self.internetexplorer.Enable()
         self.mozilla.Enable()
+        self.music.Enable()
         self.pictures.Enable()
         self.videos.Enable()
 
@@ -354,19 +346,24 @@ class Tab_SelectLocations(wx.Panel):
         return list selected"""
         selected = []
         if self.desktop.Value == True:
-            selected.append('desktop')
+            selected.append('Desktop')
         if self.documents.Value == True:
-            selected.append('documents')
+            selected.append('Documents')
         if self.internetexplorer.Value == True:
-            selected.append('internetexplorer')
+            selected.append('Internet Explorer')
         if self.mozilla.Value == True:
-            selected.append('mozilla')
+            selected.append('Mozilla')
+        if self.music.Value == True:
+            selected.append('Music')
         if self.pictures.Value == True:
-            selected.append('pictures')
+            selected.append('Pictures')
         if self.videos.Value == True:
-            selected.append('videos')
+            selected.append('Videos')
         return selected
+# ---------------------------------------------------------------------------- #
 
+
+# ------ 7. Select Exclusion Patterns Tab ------------------------------------ #
 class Tab_SelectExclusions(wx.Panel):
     """Tab_SelectExclusions( parent, list messages, int start_location, int inbetween )
 
@@ -375,7 +372,7 @@ class Tab_SelectExclusions(wx.Panel):
     def __init__(self, parent, messages, start_location, inbetween):
         wx.Panel.__init__(self, parent=parent)
 
-        info = wx.StaticText(self, -1, get_message(messages[0],'select-exclusions'), style=wx.ALIGN_LEFT)
+        info = wx.StaticText(self, -1, messages['backup']['select-exclusions'], style=wx.ALIGN_LEFT)
 
         start_checkboxes = start_location
         self.music = wx.CheckBox(self, -1, 'Music', (10, start_checkboxes+inbetween))
@@ -423,75 +420,171 @@ class Tab_SelectExclusions(wx.Panel):
         return list selected"""
         selected = []
         if self.music.Value == True:
-            selected.append('music')
+            selected.append('Music')
         if self.pictures.Value == True:
-            selected.append('pictures')
+            selected.append('Pictures')
         if self.tempfiles.Value == True:
-            selected.append('tempfiles')
+            selected.append('Temporary Files')
         if self.videos.Value == True:
-            selected.append('videos')
+            selected.append('Videos')
         if self.virtualmachines.Value == True:
-            selected.append('virtualmachines')
+            selected.append('Virtual Machines')
         return selected
+# ---------------------------------------------------------------------------- #
+
+
+# ------ 8. Start Backup Tab ------------------------------------------------- #        
+class Tab_BackupProgress(wx.Panel):
+    """Tab_BackupProgress( parent, list messages )
+    
+    The final tab encountered by the user.  Clicking "Start Backup" will begin
+    the backup progress, disabling all buttons and tabs."""
+    def __init__(self, parent, messages):
+        wx.Panel.__init__(self, parent=parent)
+        
+        self.totalFiles = 0
+        self.remainingFiles = 0
+            
+        self.fileSizes = {}
+        self.totalSize = 0
+        self.remainingSize = 0
+        
+        self.totalSteps = 0
+
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        hbox1 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.status = wx.StaticText(self, -1, "Ready for Backup... [??/??]")
+        self.progress = wx.Gauge(self, -1, 100, size=(350, 25))
+        self.percentageComplete = wx.StaticText(self, -1, "0% Complete")
+        self.filesRemaining = wx.StaticText(self, -1, "Click \"Start Backup\" to Begin...")
+        self.currentFile = wx.StaticText(self, -1, "-----------------------------------------------------------------------------------------------------")
+
+        hbox1.Add(self.progress, 1, wx.ALIGN_CENTRE)
+        
+        vbox.Add((0, 50), 0)
+        vbox.Add(self.status, 0, wx.ALIGN_CENTRE)
+        vbox.Add((0, 10), 0)
+        vbox.Add(hbox1, 0, wx.ALIGN_CENTRE)
+        vbox.Add(self.percentageComplete, 0, wx.ALIGN_CENTRE)
+        vbox.Add((0, 30), 0)
+        vbox.Add(self.filesRemaining, 1, wx.ALIGN_CENTRE)
+        vbox.Add((0, 50), 0)
+        vbox.Add(self.currentFile, 1, wx.ALIGN_CENTRE)
+
+        self.SetSizer(vbox)
+        
+    def getFilesAndSizes(self, backupLocations, exclusionPatterns):
+        """getFilesAndSizes( dict backupLocations, list exclusionPatterns )
+        
+        When called from outside of the function, sets the local variables
+          fileSizes, totalSize, remainingSize, totalFiles, remainingFiles
+        to their proper values."""
+        for key in backupLocations.keys():
+            self.totalSteps += 1
+            files = getBackupFiles( backupLocations[key], exclusionPatterns )
+            for j in files:
+                fileSize = os.stat(j).st_size
+                self.fileSizes[j] = fileSize
+                self.totalSize += fileSize
+                self.remainingSize += fileSize
+                self.totalFiles += 1
+                self.remainingFiles += 1
+
+    def shortFilename(self, filename ):
+        """shortFilename( string filename ) -> string
+        
+        Returns a string of the truncated filename.
+        
+        return string filename"""
+        if len(filename) >= 35:
+            newname = "..."
+            for i in range(len(filename)-36, len(filename)):
+                newname += filename[i]
+            return newname
+        return filename
+                
+    def setStatus(self, step, number):
+        """setStatus( string step, int number )
+        
+        Updates the status StaticText to the current 'step' being backed up."""
+        self.status.SetLabel("Backing up " + step + "[" + str(number) + "/" + str(self.totalSteps) + "]")
+        
+    def setProgress(self):
+        """setProgress( )
+        
+        Updates the progress bar and percentage complete to the appropriate values."""
+        value = 100-((self.remainingSize*1.0)/(self.totalSize*1.0))*100
+        strValue = str(value)
+        shortValue = ""
+        for i in range(len(strValue)):
+            if strValue[i] == '.':
+                break
+            shortValue += strValue[i]
+        self.progress.SetValue(value)
+        self.percentageComplete.SetLabel( shortValue + "% Complete" )
+        
+    def setFilesRemaining(self):
+        """setFilesRemaining( )
+        
+        Updates the text for filesRemaining to current values."""
+        self.filesRemaining.SetLabel( str(self.remainingFiles) + " files (" + readableSize(self.remainingSize) + ") of " + str(self.totalFiles) + " (" + readableSize(self.totalSize) + ") remaining...")
+        
+    def setCurrentFile(self, filename):
+        """setCurrentFile( string filename )
+        
+        Updates the text of currentFile to 'filename'."""
+        self.currentFile.SetLabel( "Copying [" + self.shortFilename(str(filename)) + "] (" + readableSize( self.fileSizes[filename] ) + ")" )
+            
+    def backupProgress(self, parent, backupLocations, targetDirectory, exclusionPatterns):
+        """backupProgress( parent, dict backupLocations, string targetDirectory, list exclusionPatterns )
+        
+        Runs the backup using the specified values."""
+        for i in range(0,7):
+            parent.GetPage(i).Disable()
+            parent.GetPage(i).Hide()
+        self.getFilesAndSizes( backupLocations, exclusionPatterns )
+        keyIndex = 0
+        for key in backupLocations.keys():
+            keyIndex += 1
+            self.setStatus(key, keyIndex)
+            mkdir(dirString(targetDirectory) + key)
+            backupFiles = getBackupFiles( backupLocations[key], exclusionPatterns )
+            backupFiles.sort()
+        
+            makeBackupFolders( backupLocations[key], dirString(targetDirectory) + key )
+            
+            targetFiles = targetFilenames( backupLocations[key], dirString( dirString(targetDirectory) + key), backupFiles )
+            targetFiles.sort()
+            
+            for i in range(len(backupFiles)):
+                self.setProgress()
+                self.setFilesRemaining()
+                self.setCurrentFile(backupFiles[i])
+                copy( backupFiles[i], targetFiles[i] )
+                self.remainingFiles -= 1
+                self.remainingSize -= self.fileSizes[backupFiles[i]]
+                wx.Yield()
+        self.backupComplete()
+        
+    def backupComplete(self):
+        """backupComplete( )
+        
+        Updates all fields to complete values."""
+        self.status.SetLabel("Backup Complete")
+        self.progress.SetValue(100)
+        self.percentageComplete.SetLabel("100% Complete")
+        self.filesRemaining.SetLabel("")
+        self.currentFile.SetLabel("")
+        wx.Yield()
+# ---------------------------------------------------------------------------- #
 
 ### - END TABS ------------------------------------------------------------- ###
 
-class GuiBackupProgress(wx.Dialog):
-    """GuiBackupProgress( parent, string source_location, list operating_system, string target_location, string user, list locations, list exclusions )
-
-    The Progress Dialog box that appears when the backup begins.  It will show 
-    current information as to what is currently being copied over, and how many
-    files remain."""
-    def __init__(self, parent, source_location, operating_system, target_location, user, locations, exclusions):
-        wx.Dialog.__init__(self, parent, wx.ID_ANY, "Wonder Backup Progress", wx.DefaultPosition, wx.Size(400, 80))
-        parent.Disable()
-
-        self.source = source_location
-        self.target = target_location
-        self.files = []
-
-        xml_tree = readXML("wonderbackup.xml")
-
-        self.profile = get_users_location( source_location, operating_system ) + user + "/"
-
-        locations_list = simple_locations( xml_tree, operating_system[0], operating_system[1] )
-        self.actual_locations = []
-        for i in range(len(locations)):
-            for j in range(len(locations_list)):
-                if locations[i] == locations_list[j][0][0]:
-                    self.actual_locations.append(self.profile + locations_list[j][1])
-
-        self.exclusions = []
-
-        panel = wx.Panel(self, 1)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        self.copyProgress = wx.StaticText(self, -1, "\tCopy Progress", style=wx.ALIGN_CENTER)
-        self.filename = wx.StaticText(self, -1, "\tFilename", style=wx.ALIGN_CENTER)
-        self.total = 0
-        self.incrementer = 0
-
-        sizer.Add(self.copyProgress, 0.5, wx.ALL, 10)
-        sizer.Add(self.filename, 0.5, wx.ALL, 10)
-
-        self.getFiles()
-
-        panel.SetSizer(sizer)
-        panel.Show()
-        self.Centre()
-        self.ShowModal()
 
 
-    def getFiles(self):
-        """getFiles()
 
-        Gets the number of files to be backed up, and sets the total to that number."""
-        for i in self.actual_locations:
-           self.files += get_files_for_backup( i, self.exclusions )
-        self.total = len(self.files)
-        print self.total
-
- 
+### --- Graphical User Interface for Wonder Backup ------------------------- ###
 class WonderGUI(wx.Frame):
     """
     Frame that holds all other widgets.  The primary interface of Wonder Backup.
@@ -509,7 +602,6 @@ class WonderGUI(wx.Frame):
         imp = wx.MenuItem(file, 1, '&Import')
         exp = wx.MenuItem(file, 2, '&Export')
         quit = wx.MenuItem(file, 3, '&Quit\tCtrl+Q')
-#        quit.SetBitmap(wx.Bitmap('icons/exit.png')) # If I wanted there to be an image for a menu entry, this would be the code.
         file.AppendItem(imp)
         file.AppendItem(exp)
         file.AppendItem(quit)
@@ -534,35 +626,36 @@ class WonderGUI(wx.Frame):
         language = 'en'
         settings = readXML("wonderbackup.xml")
         messages = getMessages(readXML("localizations.xml"), language)
-# Messages are in the format (backup_wizard, backup_options, dialogs, prompts, summary, welcome, about)
-#        locations = get_os_backup_locations(settings)
         exclusions = getExclusions(settings)
 
       # - Notebook (Tabs) ---------------------------------------------------- # 
-        notebook = wx.Notebook(panel, style=wx.NB_LEFT)
+        if detectOS()['family'] == 'linux':
+            notebook = wx.Notebook(panel, style=wx.NB_LEFT)
+        else:
+            notebook = wx.Notebook(panel, style=wx.NB_TOP)
         tabWelcome = Tab_Welcome(notebook, messages )
         notebook.AddPage(tabWelcome, "Welcome")
 # Select Backup Type Tab:
         tabOne = Tab_SelectBackupType(notebook, messages)
-        notebook.AddPage(tabOne, "1. Backup Type")
+        notebook.AddPage(tabOne, "Backup Type")
 # Select Source Location Tab:
         tabTwo = Tab_SelectSourceLocation(notebook, messages)
-        notebook.AddPage(tabTwo, "2. Select Source")
+        notebook.AddPage(tabTwo, "Select Source")
 # Select Target Location Tab:
         tabThree = Tab_SelectTargetLocation(notebook, messages)
-        notebook.AddPage(tabThree, "3. Select Target")
+        notebook.AddPage(tabThree, "Select Target")
 # Select Users Tab:
         tabFour = Tab_SelectUser(notebook, messages)
-        notebook.AddPage(tabFour, "4. Select Users")
+        notebook.AddPage(tabFour, "Select Users")
 # Select Locations Tab:
         tabFive = Tab_SelectLocations(notebook, messages, 30, 30)
-        notebook.AddPage(tabFive, "5. Select Locations")
+        notebook.AddPage(tabFive, "Select Locations")
 # Select Exclusions Tab:
         tabSix = Tab_SelectExclusions(notebook, messages, 30, 30)
-        notebook.AddPage(tabSix, "6. Select Exclusions")
+        notebook.AddPage(tabSix, "Select Exclusions")
 # Start Backup Tab
-        tabSeven = Notebook_Tab(notebook, messages)
-        notebook.AddPage(tabSeven, "7. Start Backup")
+        tabSeven = Tab_BackupProgress( notebook, messages )
+        notebook.AddPage(tabSeven, "Start Backup")
         for i in range(1,8):
             notebook.GetPage(i).Hide()
       # - END NOTEBOOK ------------------------------------------------------- #
@@ -596,32 +689,47 @@ class WonderGUI(wx.Frame):
 
         Gets all current settings and invokes a dialog box is any of the settings 
         are missing."""
-        backup_type = notebook.GetPage(1).getSelection()
-        source_location = notebook.GetPage(2).getSelection()
-        operating_system = notebook.GetPage(2).getOS()
-        target_location = notebook.GetPage(3).getSelection()
-        user = notebook.GetPage(4).getSelection()
-        locations = notebook.GetPage(5).getSelection()
-        exclusions = notebook.GetPage(6).getSelection()
-        if source_location == "":
+        selectedBackupType = notebook.GetPage(1).getSelection()
+        selectedSourceLocation = notebook.GetPage(2).getSelection()
+        sourceOS = notebook.GetPage(2).getOS()
+        selectedTargetLocation = notebook.GetPage(3).getSelection()
+        selectedUser = notebook.GetPage(4).getSelection()
+        selectedLocations = notebook.GetPage(5).getSelection()
+        selectedExclusions = notebook.GetPage(6).getSelection()
+        if selectedSourceLocation == "":
             self.somethingMissing("Source Location")
             return
-        elif target_location == "":
+        elif selectedTargetLocation == "":
             self.somethingMissing("Target Location")
             return
-        elif user == "":
+        elif selectedUser == "":
             self.somethingMissing("User")
             return
-        elif locations == []:
+        elif selectedLocations == []:
             self.somethingMissing("Locations to Backup")
             return
-        print "Backup Type: " + str(backup_type)
-        print "Source Location: " + str(source_location)
-        print "Target Location: " + str(target_location)
-        print "Selected Profile: " + str(user)
-        print "Locations to Back up: " + str(locations)
-        print "Files to Avoid: " + str(exclusions)
-        GuiBackupProgress(self, source_location, operating_system, target_location, user, locations, exclusions)
+            
+
+            
+        xmldoc = readXML("wonderbackup.xml")
+        messages = getMessages(xmldoc, 'en')
+            
+        userProfile = dirString( getProfilesFolder( selectedSourceLocation ) + selectedUser )
+            
+        allLocations = getLocations( xmldoc, sourceOS['family'], sourceOS['version'] )
+        backupLocations = {}
+        for each in selectedLocations:
+            if checkLocation( dirString( userProfile + allLocations[each] ) ):
+                backupLocations[each] = dirString( userProfile + allLocations[each] )
+                
+        allExclusions = getExclusions( xmldoc )
+        backupExclusions = []
+        for each in selectedExclusions:
+            for i in range(len(allExclusions[each])):
+                backupExclusions.append(allExclusions[each][i])
+        backupExclusions.sort()
+
+        notebook.GetPage(7).backupProgress(notebook, backupLocations, selectedTargetLocation, backupExclusions)
 
 
 
@@ -639,11 +747,14 @@ class WonderGUI(wx.Frame):
         Event handler for when the Previous button is clicked."""
         def onclick_previous(event):
             self.btn_next.Enable()
-            if notebook.GetSelection() == 1:
+            if notebook.GetSelection() == 3 and notebook.GetPage(1).getSelection() == 'local':
                 self.btn_prev.Disable()
-            self.btn_next.SetLabel(label="Next")
-            notebook.ChangeSelection(notebook.GetSelection()-1)
-#            notebook.GetPage(notebook.GetSelection()+1).Disable()
+                notebook.ChangeSelection(1)
+            else:
+                if notebook.GetSelection() == 1:
+                    self.btn_prev.Disable()
+                self.btn_next.SetLabel(label="Next")
+                notebook.ChangeSelection(notebook.GetSelection()-1)
         return onclick_previous
 
     def goNext(self, notebook):
@@ -652,12 +763,20 @@ class WonderGUI(wx.Frame):
         Event handler for when the Next button is clicked."""
         def onclick_next(event):
             self.btn_prev.Enable()
+            if self.btn_next.Label == "Close":
+                self.Close()
             if self.btn_next.Label == "Start Backup":
+                self.btn_prev.Disable()
+                self.btn_prev.Hide()
+                self.btn_next.Disable()
                 self.getBackupSettings(notebook)
+                self.btn_next.Enable()
+                self.btn_next.SetLabel("Close")
             if notebook.GetSelection() == 1:
                 if notebook.GetPage(1).getSelection() == 'local':
                     notebook.GetPage(notebook.GetSelection()+2).Show()
                     notebook.ChangeSelection(notebook.GetSelection()+2)
+                    notebook.GetPage(2).setLocal(notebook)
                 else:
                     notebook.GetPage(notebook.GetSelection()+1).Show()
                     if notebook.GetSelection() == 6:
@@ -681,17 +800,17 @@ class WonderGUI(wx.Frame):
         """OnAboutBox( event )
 
         Shows the About dialog."""
-        messages = get_messages(readXML("localizations.xml"), 'en')
+        messages = getMessages(readXML("localizations.xml"), 'en')
 
         info = wx.AboutDialogInfo()
 
         info.SetIcon(wx.Icon('Icon.png', wx.BITMAP_TYPE_PNG))
         info.SetName('Wonder Backup')
-        info.SetVersion(get_message(messages[6], 'version'))
-        info.SetDescription(get_message(messages[6], 'description'))
+        info.SetVersion(messages['about']['version'])
+        info.SetDescription(messages['about']['description'])
         info.SetCopyright('(C) 2010 Sean Davis')
         info.SetWebSite('http://wonderbackup.sourceforge.net')
-        info.SetLicence(get_message(messages[6], 'license'))
+        info.SetLicence(messages['about']['license'])
         info.AddDeveloper('Sean Davis')
         info.AddDocWriter('Sean Davis')
         info.AddArtist('Sean Davis')

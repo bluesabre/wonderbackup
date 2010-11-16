@@ -5,7 +5,7 @@
         <message category="about" name="description">Wonder Backup is an open source, Python-powered, operating system independent backup solution for use in scenarios from end-users to enterprise solutions.</message>
         <message category="about" name="license">Wonder Backup is free software, though licensing is a difficult legal decision that will be left for a later point in time.
 Ultimately, I wish for this software to be free for anyone and everyone, and hope to one day find a suitable license.</message>
-        <message category="about" name="version">0.1 Alpha</message>
+        <message category="about" name="version">0.3 Beta</message>
 
         <message category="backup" name="backup-type">Please select the backup type.  'Local' refers to a backup
 performed on your own computer. 'External' refers to a mounted 

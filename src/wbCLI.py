@@ -4,7 +4,7 @@
 #
 # Contains the functions for the command-line interface.
 #
-# Modified by Sean Davis on November 11, 2010
+# Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
 from wbBackup import *
@@ -12,34 +12,6 @@ from wbFile import *
 from wbOS import *
 from wbXML import *
 
-# Needs to include messages and we need updated messages for this part of the
-# process.
-def cliBackup( messages, backupLocations, targetDirectory, exclusionPatterns ):
-    """cliBackup( dict message, list backupLocations, string targetDirectory, list exclusionPatterns)
-    
-    Performs the command-line backup, using the language from messages, of files
-    from the list backupLocations to the targetDirectory, excluding any files
-    that match the exclusionPatterns."""
-
-    for key in backupLocations.keys():
-        print messages['backup-progress']['category-backup'] + "[" + key + "]\n\n"
-        mkdir(dirString(targetDirectory) + key)
-        print "\t" + messages['backup-progress']['getting-files'] + backupLocations[key] + "..."
-        backupFiles = getBackupFiles( backupLocations[key], exclusionPatterns )
-        backupFiles.sort()
-        print "\t" + messages['backup-progress']['found'] + str(len(backupFiles)-1) + messages['backup-progress']['files-to-backup']
-    
-        print "\t" + messages['backup-progress']['building-structure'] + targetDirectory + "...\n\n"
-        makeBackupFolders( backupLocations[key], dirString(targetDirectory) + key )
-        
-        print "\t" + messages['backup-progress']['configuring-target'] + "\n\n"
-        targetFiles = targetFilenames( backupLocations[key], dirString( dirString(targetDirectory) + key), backupFiles )
-        targetFiles.sort()
-        
-        total = len(backupFiles)-1
-        for i in range(len(backupFiles)):
-            print messages['backup-progress']['copying-file'] + str(i) + messages['backup-progress']['of'] + str(total) + "..."
-            copy( backupFiles[i], targetFiles[i] )        
 
 def selectBackupType( messages ):
     """selectBackupType( dict messages ) -> string
@@ -155,6 +127,33 @@ def selectExclusions( messages, exclusions ):
     exclusionPatterns.sort()
     print "\n\n\n"
     return exclusionPatterns
+    
+def cliBackup( messages, backupLocations, targetDirectory, exclusionPatterns ):
+    """cliBackup( dict message, list backupLocations, string targetDirectory, list exclusionPatterns)
+    
+    Performs the command-line backup, using the language from messages, of files
+    from the list backupLocations to the targetDirectory, excluding any files
+    that match the exclusionPatterns."""
+
+    for key in backupLocations.keys():
+        print messages['backup-progress']['category-backup'] + "[" + key + "]\n\n"
+        mkdir(dirString(targetDirectory) + key)
+        print "\t" + messages['backup-progress']['getting-files'] + backupLocations[key] + "..."
+        backupFiles = getBackupFiles( backupLocations[key], exclusionPatterns )
+        backupFiles.sort()
+        print "\t" + messages['backup-progress']['found'] + str(len(backupFiles)-1) + messages['backup-progress']['files-to-backup']
+    
+        print "\t" + messages['backup-progress']['building-structure'] + targetDirectory + "...\n\n"
+        makeBackupFolders( backupLocations[key], dirString(targetDirectory) + key )
+        
+        print "\t" + messages['backup-progress']['configuring-target'] + "\n\n"
+        targetFiles = targetFilenames( backupLocations[key], dirString( dirString(targetDirectory) + key), backupFiles )
+        targetFiles.sort()
+        
+        total = len(backupFiles)-1
+        for i in range(len(backupFiles)):
+            print messages['backup-progress']['copying-file'] + str(i) + messages['backup-progress']['of'] + str(total) + "..."
+            copy( backupFiles[i], targetFiles[i] )        
 
 def startBackup( messages, backupType, sourceDirectory, targetDirectory, user, backupLocations, exclusions ):
     """startBackup( dict messages, string backupType, string sourceDirectory, string targetDirectory, string user, dict backupLocations, list exclusions )

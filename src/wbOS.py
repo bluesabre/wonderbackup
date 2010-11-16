@@ -4,14 +4,20 @@
 #
 # Contains the functions for the operating system dependent tasks.
 #
-# Modified by Sean Davis on November 6, 2010
+# Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
 from wbXML import *
 from platform import uname
-from os import getenv, listdir #, statvfs
+from os import getenv, listdir
 from os.path import isdir
 from wbFile import readableSize
+
+
+try:
+    from os import statvfs
+except ImportError:
+    print "This platform does not support the module 'statvfs'."
 
 def dirString( directory ):
     """dirString( string directory ) -> string
@@ -78,10 +84,13 @@ def freespace(directory):
     highest representation.
     
     return string"""
-    space = statvfs(directory)
-    size = space.f_bsize * space.f_bavail
-    readable = readableSize(size)
-    return "Approximately " + readable[0] + " " + readable[1] + " available on this location."
+    if detectOS()['family'] == 'linux':
+        space = statvfs(directory)
+        size = space.f_bsize * space.f_bavail
+        readable = readableSize(size)
+        return "Approximately " + readable + " available on this location."
+    else:
+        return "Free Space detection not available on this platform."
 
 def getCurrentUser():
     """Returns the currently logged in user.
@@ -120,7 +129,7 @@ def getProfilesFolder( sourceDirectory ):
         profilesDir = sourceDirectory + "home/"
     return dirString( profilesDir )
 
-def getProfiles( source_dir ):
+def getProfiles( sourceDirectory ):
     """getProfiles( string sourceDirectory ) -> list
 
     Returns a list of the profiles found on the given sourceDirectory.

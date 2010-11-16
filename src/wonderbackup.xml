@@ -2,32 +2,35 @@
 <wonderbackup>
     <backup_locations>
         <os family="windows" version="xp,2003">
-            <location name="desktop">Desktop/</location>
-            <location name="documents">My Documents/</location>
-            <location name="internetexplorer">Favorites/</location>
-            <location name="mozilla">Application Data/Mozilla/Firefox/</location>
+            <location name="Desktop">Desktop/</location>
+            <location name="Documents">My Documents/</location>
+            <location name="Internet Explorer">Favorites/</location>
+            <location name="Mozilla">Application Data/Mozilla/Firefox/</location>
         </os>
         <os family="windows" version="vista,2008,7">
-            <location name="desktop">Desktop/</location>
-            <location name="documents">Documents/</location>
-            <location name="internetexplorer">Favorites/</location>
-            <location name="mozilla">AppData/Roaming/Mozilla/Firefox/</location>
-            <location name="pictures">Pictures/</location>
-            <location name="videos">Videos/</location>
+            <location name="Desktop">Desktop/</location>
+            <location name="Documents">Documents/</location>
+            <location name="Internet Explorer">Favorites/</location>
+            <location name="Mozilla">AppData/Roaming/Mozilla/Firefox/</location>
+            <location name="Music">Music/</location>
+            <location name="Pictures">Pictures/</location>
+            <location name="Videos">Videos/</location>
         </os>
         <os family="linux" version="ubuntu">
-            <location name="desktop">Desktop/</location>
-            <location name="documents">Documents/</location>
-            <location name="mozilla">.mozilla/</location>
-            <location name="pictures">Pictures/</location>
-            <location name="videos">Videos/</location>
+            <location name="Desktop">Desktop/</location>
+            <location name="Documents">Documents/</location>
+            <location name="Mozilla">.mozilla/</location>
+            <location name="Music">Music/</location>
+            <location name="Pictures">Pictures/</location>
+            <location name="Videos">Videos/</location>
         </os>
         <os family="mac" version="osx">
-            <location name="desktop">Desktop/</location>
-            <location name="documents">Documents/</location>
-            <location name="mozilla"></location>
-            <location name="pictures">Pictures/</location>
-            <location name="movies">Movies/</location>
+            <location name="Desktop">Desktop/</location>
+            <location name="Documents">Documents/</location>
+            <location name="Mozilla"></location>
+            <location name="Music">Music/</location>
+            <location name="Pictures">Pictures/</location>
+            <location name="Movies">Movies/</location>
         </os>
     </backup_locations>
 

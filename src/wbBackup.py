@@ -4,13 +4,14 @@
 #
 # Contains the functions used in the backup process.
 #
-# Modified by Sean Davis on November 11, 2010
+# Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
 from shutil import copy2
 from os import walk, listdir, mkdir
 from os.path import isdir, isfile, islink
 from wbOS import *
+
 
 def getContents( directory ):
     """getContents( string directory ) -> dict
@@ -87,7 +88,7 @@ def getBackupFiles( sourceDirectory, exclusionPatterns ):
     any of the exclusionPatterns.
 
     Return list absoluteFiles"""
-    sourceDirectory = dirString(source_directory)
+    sourceDirectory = dirString(sourceDirectory)
     contents = getContents(sourceDirectory)
     files = excludeFiles(contents['files'], exclusionPatterns)
     absoluteFiles = []
