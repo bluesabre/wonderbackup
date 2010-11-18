@@ -11,6 +11,7 @@ from shutil import copy2
 from os import walk, listdir, mkdir
 from os.path import isdir, isfile, islink
 from wbOS import *
+from time import sleep
 
 
 def getContents( directory ):
@@ -57,17 +58,21 @@ def excludeFiles(files, exclusionPatterns):
                             found = False
                             break
                 else:
-                    index = -1
-                    for i in range(len(exclusion)):
-                        if exclusion[i] == '*':
-                            index = i
-                            break
-                    if index == -1:
-                        if exclusion.lower() != file.lower():
-                            found = False
-                    for j in range(index):
-                        if exclusion.lower()[j] != file.lower()[j]:
-                            found = False
+                    if exclusion == "~$*":
+                        found = False
+                    else:
+                        index = -1
+                        for i in range(len(exclusion)):
+                            if exclusion[i] == '*':
+                                index = i
+                                break
+                        if index == -1:
+                            if exclusion.lower() != file.lower():
+                                found = False
+                        for j in range(index):
+                            print j
+                            if exclusion.lower()[j] != file.lower()[j]:
+                                found = False
                 if found == True:
                     new.remove(file)
                     previousFound = True
@@ -78,7 +83,14 @@ def copy( originalFile, newFile ):
     """copy( string originalFile, string newFile )
 
     Copies the file originalFile to the location and file defined by newFile."""
-    copy2(originalFile, newFile)
+    try: # Added this in case an error is encountered to keep the program from just locking up.
+        copy2(originalFile, newFile)
+    except:
+        sleep(5)
+        try:
+            copy2(originalFile, newFile)
+        except:
+            print "Unable to copy " + originalFile
 
 def getBackupFiles( sourceDirectory, exclusionPatterns ):
     """getBackupFiles( string sourceDirectory, list exclusionPatterns ) -> list
@@ -111,8 +123,12 @@ def makeBackupFolders( sourceDirectory, targetDirectory ):
     contents = getContents(sourceDirectory)
     directories = contents['directories']
     for directory in directories:
-        mkdir(targetDirectory + directory)
-        makeBackupFolders( sourceDirectory + directory, targetDirectory + directory )
+        try:
+            if not checkLocation(targetDirectory + directory):
+                mkdir(targetDirectory + directory)
+            makeBackupFolders( sourceDirectory + directory, targetDirectory + directory )
+        except:
+            print "Unable to access " + directory
     return True
 
 def targetFilenames( sourceDirectory, targetDirectory, files ):

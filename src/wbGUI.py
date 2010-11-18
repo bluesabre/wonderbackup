@@ -787,7 +787,10 @@ class WonderGUI(wx.Frame):
                     notebook.GetPage(notebook.GetSelection()+1).Show()
                 if notebook.GetSelection() == 6:
                     self.btn_next.SetLabel(label="Start Backup")
-                notebook.ChangeSelection(notebook.GetSelection()+1)
+                try:
+                    notebook.ChangeSelection(notebook.GetSelection()+1)
+                except:
+                    False
         return onclick_next
 
     def OnQuit(self, event):
