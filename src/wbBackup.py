@@ -25,13 +25,19 @@ def getContents( directory ):
     directories = []
     symlinks = []
     contents = {}
-    for listing in listdir(directory):
-        if isdir(directory + listing) and not islink(directory + listing):
-            directories.append(listing)
-        elif isfile(directory + listing):
-            files.append(listing)
-        else:
-            symlinks.append(listing)
+    try:
+        allListings = listdir(directory)
+        for listing in listdir(directory):
+            if isdir(directory + listing) and not islink(directory + listing):
+                directories.append(listing)
+            elif isfile(directory + listing):
+                files.append(listing)
+            else:
+                symlinks.append(listing)
+    except:
+        print "Cannot access " + directory
+        if detectOS()['family'] == 'windows':
+            print "\tThis directory is probably a symbolic link.  No worries."
     contents['files'] = files
     contents['directories'] = directories
     contents['symlinks'] = symlinks
