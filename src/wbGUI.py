@@ -4,7 +4,7 @@
 #
 # Contains the functions for the graphical user interface.
 #
-# Modified by Sean Davis on November 14, 2010
+# Modified by Sean Davis on November 23, 2010
 # ---------------------------------------------------------------------------- #
 
 import wx
@@ -508,7 +508,7 @@ class Tab_BackupProgress(wx.Panel):
         """setStatus( string step, int number )
         
         Updates the status StaticText to the current 'step' being backed up."""
-        self.status.SetLabel("Backing up " + step + "[" + str(number) + "/" + str(self.totalSteps) + "]")
+        self.status.SetLabel("Backing up " + step + " [" + str(number) + "/" + str(self.totalSteps) + "]")
         
     def setProgress(self):
         """setProgress( )
@@ -539,7 +539,11 @@ class Tab_BackupProgress(wx.Panel):
     def backupProgress(self, parent, backupLocations, targetDirectory, exclusionPatterns):
         """backupProgress( parent, dict backupLocations, string targetDirectory, list exclusionPatterns )
         
-        Runs the backup using the specified values."""
+        Runs the backup using the specified values.
+        
+        An error log is generated at the targetDirectory as ErrorLog.txt"""
+        ErrorLog = open( dirString(targetDirectory)+"ErrorLog.txt", 'a')
+        ErrorLog.write("[Wonder Backup Session " + timestamp() + "]\r\n")
         for i in range(0,7):
             parent.GetPage(i).Disable()
             parent.GetPage(i).Hide()
@@ -548,11 +552,15 @@ class Tab_BackupProgress(wx.Panel):
         for key in backupLocations.keys():
             keyIndex += 1
             self.setStatus(key, keyIndex)
-            mkdir(dirString(targetDirectory) + key)
+            if not checkLocation( dirString(targetDirectory) + key ):
+                mkdir(dirString(targetDirectory) + key)
             backupFiles = getBackupFiles( backupLocations[key], exclusionPatterns )
             backupFiles.sort()
         
-            makeBackupFolders( backupLocations[key], dirString(targetDirectory) + key )
+            FolderErrors = makeBackupFolders( backupLocations[key], dirString(targetDirectory) + key )
+            
+            for item in FolderErrors:
+                ErrorLog.write(item + "\r\n")                
             
             targetFiles = targetFilenames( backupLocations[key], dirString( dirString(targetDirectory) + key), backupFiles )
             targetFiles.sort()
@@ -561,10 +569,14 @@ class Tab_BackupProgress(wx.Panel):
                 self.setProgress()
                 self.setFilesRemaining()
                 self.setCurrentFile(backupFiles[i])
-                copy( backupFiles[i], targetFiles[i] )
+                CopyError = copy( backupFiles[i], targetFiles[i] )
+                if CopyError != True:
+                    ErrorLog.write(CopyError + "\r\n")                
                 self.remainingFiles -= 1
                 self.remainingSize -= self.fileSizes[backupFiles[i]]
                 wx.Yield()
+        ErrorLog.write("[END SESSION]\r\n\r\n\r\n\r\n")
+        ErrorLog.close()
         self.backupComplete()
         
     def backupComplete(self):

@@ -4,15 +4,24 @@
 #
 # Contains the functions used in the backup process.
 #
-# Modified by Sean Davis on November 14, 2010
+# Modified by Sean Davis on November 23, 2010
 # ---------------------------------------------------------------------------- #
 
 from shutil import copy2
-from os import walk, listdir, mkdir
+from os import walk, listdir, mkdir, stat
 from os.path import isdir, isfile, islink
 from wbOS import *
-from time import sleep
+from time import strftime
 
+
+def timestamp():
+    """timestamp() -> string
+    
+    Returns a string containing the current time and date in the following
+    format:  YYYY-MM-DD-HH:MM:SS
+    
+    return string"""
+    return strftime("%Y-%m-%d-%H:%M:%S")
 
 def getContents( directory ):
     """getContents( string directory ) -> dict
@@ -35,9 +44,7 @@ def getContents( directory ):
             else:
                 symlinks.append(listing)
     except:
-        print "Cannot access " + directory
-        if detectOS()['family'] == 'windows':
-            print "\tThis directory is probably a symbolic link.  No worries."
+        pass
     contents['files'] = files
     contents['directories'] = directories
     contents['symlinks'] = symlinks
@@ -86,17 +93,20 @@ def excludeFiles(files, exclusionPatterns):
 
 
 def copy( originalFile, newFile ):
-    """copy( string originalFile, string newFile )
+    """copy( string originalFile, string newFile ) -> string
 
-    Copies the file originalFile to the location and file defined by newFile."""
+    Copies the file originalFile to the location and file defined by newFile.
+    If an error is encountered, this function returns the error, otherwise, 
+    it returns True.
+    
+    return string or True"""
     try: # Added this in case an error is encountered to keep the program from just locking up.
         copy2(originalFile, newFile)
     except:
-        sleep(5)
-        try:
-            copy2(originalFile, newFile)
-        except:
-            print "Unable to copy " + originalFile
+        if not isfile( newFile ) or stat( originalFile ).st_size != stat( newFile ).st_size:
+            return timestamp() + " FILE_COPY_ERROR: " + originalFile
+    return True
+            
 
 def getBackupFiles( sourceDirectory, exclusionPatterns ):
     """getBackupFiles( string sourceDirectory, list exclusionPatterns ) -> list
@@ -105,7 +115,7 @@ def getBackupFiles( sourceDirectory, exclusionPatterns ):
     in an ordered list, the absolute locations for each file that does not match
     any of the exclusionPatterns.
 
-    Return list absoluteFiles"""
+    return list absoluteFiles"""
     sourceDirectory = dirString(sourceDirectory)
     contents = getContents(sourceDirectory)
     files = excludeFiles(contents['files'], exclusionPatterns)
@@ -122,8 +132,10 @@ def makeBackupFolders( sourceDirectory, targetDirectory ):
     """makeBackupFolders( string sourceDirectory, string targetDirectory )
 
     Recreates the folder structure of sourceDirectory in targetDirectory.
+    This function returns any errors that may be encountered.
 
-    Return True"""
+    return list errors"""
+    errors = []
     sourceDirectory = dirString(sourceDirectory)
     targetDirectory = dirString(targetDirectory)
     contents = getContents(sourceDirectory)
@@ -134,15 +146,15 @@ def makeBackupFolders( sourceDirectory, targetDirectory ):
                 mkdir(targetDirectory + directory)
             makeBackupFolders( sourceDirectory + directory, targetDirectory + directory )
         except:
-            print "Unable to access " + directory
-    return True
+            errors.append( timestamp() + " DIRECTORY_ACCESS_ERROR: " + sourceDirectory )
+    return errors
 
 def targetFilenames( sourceDirectory, targetDirectory, files ):
     """targetFilenames( string sourceDirectory, string targetDirectory, list files ) ->: list
 
     Returns a list of the absolute locations for the newly created files.
 
-    Return list newfiles"""
+    return list newfiles"""
     sourceDirectory = dirString(sourceDirectory)
     targetDirectory = dirString(targetDirectory)
     newfiles = []

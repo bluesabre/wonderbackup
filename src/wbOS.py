@@ -17,7 +17,7 @@ from wbFile import readableSize
 try:
     from os import statvfs
 except ImportError:
-    print "This platform does not support the module 'statvfs'."
+    pass
 
 def dirString( directory ):
     """dirString( string directory ) -> string

@@ -27,10 +27,10 @@
         <os family="mac" version="osx">
             <location name="Desktop">Desktop/</location>
             <location name="Documents">Documents/</location>
-            <location name="Mozilla"></location>
+            <location name="Mozilla">Library/Application Support/Firefox/Profiles/</location>
             <location name="Music">Music/</location>
             <location name="Pictures">Pictures/</location>
-            <location name="Movies">Movies/</location>
+            <location name="Videos">Movies/</location>
         </os>
     </backup_locations>
 
