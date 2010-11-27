@@ -53,9 +53,10 @@ def getAttributes( filename ):
     attributes['size'] = readableSize(os.stat(filename).st_size)
     mod_date = {}
     date = str(datetime.datetime.fromtimestamp(os.path.getmtime(filename)).date())
-    mod_date['year'] = date[2] + date[3]
+    mod_date['year'] = date[0] + date[1] + date[2] + date[3]
     mod_date['month'] = date[5] + date[6]
     mod_date['day'] = date[8] + date[9]
+    mod_date['time'] = date = str(datetime.datetime.fromtimestamp(os.path.getmtime(filename)).time())
     attributes['modified'] = mod_date
     
     return attributes

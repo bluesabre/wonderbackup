@@ -542,7 +542,15 @@ class Tab_BackupProgress(wx.Panel):
         Runs the backup using the specified values.
         
         An error log is generated at the targetDirectory as ErrorLog.txt"""
-        ErrorLog = open( dirString(targetDirectory)+"ErrorLog.txt", 'a')
+        try:
+            ErrorLog = open( dirString(targetDirectory)+"ErrorLog.txt", 'a')
+        except:
+            dialog = wx.MessageDialog(None, "This location does not\nappear to be writeable.", 'Write Error', wx.OK | 
+                wx.ICON_EXCLAMATION)
+            dialog.ShowModal()
+            return False
+
+            
         ErrorLog.write("[Wonder Backup Session " + timestamp() + "]\r\n")
         for i in range(0,7):
             parent.GetPage(i).Disable()
@@ -569,15 +577,26 @@ class Tab_BackupProgress(wx.Panel):
                 self.setProgress()
                 self.setFilesRemaining()
                 self.setCurrentFile(backupFiles[i])
-                CopyError = copy( backupFiles[i], targetFiles[i] )
-                if CopyError != True:
-                    ErrorLog.write(CopyError + "\r\n")                
+                if isfile(targetFiles[i]):
+                    if getAttributes(backupFiles[i]) != getAttributes(targetFiles[i]):
+                        CopyError = copy( backupFiles[i], targetFiles[i] )
+                        if CopyError != True:
+                            ErrorLog.write(CopyError + "\r\n")    
+                        else:
+                            attrib = getAttributes(backupFiles[i])
+                else:
+                    CopyError = copy( backupFiles[i], targetFiles[i] )
+                    if CopyError != True:
+                        ErrorLog.write(CopyError + "\r\n")    
+                    else:
+                        attrib = getAttributes(backupFiles[i])
                 self.remainingFiles -= 1
                 self.remainingSize -= self.fileSizes[backupFiles[i]]
                 wx.Yield()
         ErrorLog.write("[END SESSION]\r\n\r\n\r\n\r\n")
         ErrorLog.close()
         self.backupComplete()
+        return True
         
     def backupComplete(self):
         """backupComplete( )
@@ -704,7 +723,7 @@ class WonderGUI(wx.Frame):
         selectedBackupType = notebook.GetPage(1).getSelection()
         selectedSourceLocation = notebook.GetPage(2).getSelection()
         sourceOS = notebook.GetPage(2).getOS()
-        selectedTargetLocation = notebook.GetPage(3).getSelection()
+        selectedTargetLocation = dirString( notebook.GetPage(3).getSelection() )
         selectedUser = notebook.GetPage(4).getSelection()
         selectedLocations = notebook.GetPage(5).getSelection()
         selectedExclusions = notebook.GetPage(6).getSelection()
@@ -720,9 +739,7 @@ class WonderGUI(wx.Frame):
         elif selectedLocations == []:
             self.somethingMissing("Locations to Backup")
             return
-            
 
-            
         xmldoc = readXML("wonderbackup.xml")
         messages = getMessages(xmldoc, 'en')
             
@@ -733,6 +750,16 @@ class WonderGUI(wx.Frame):
         for each in selectedLocations:
             if checkLocation( dirString( userProfile + allLocations[each] ) ):
                 backupLocations[each] = dirString( userProfile + allLocations[each] )
+                if len(selectedTargetLocation) >= len(backupLocations[each]):
+                    if backupLocations[each] in selectedTargetLocation:
+                        strStart = ""
+                        for i in range(len(backupLocations[each])):
+                            strStart = strStart + backupLocations[each][i]
+                        if strStart == backupLocations[each]:
+                            dialog = wx.MessageDialog(None, "You cannot backup to a folder\nyou're making a backup of.", 'Forbidden Backup', wx.OK | 
+                                wx.ICON_EXCLAMATION)
+                            dialog.ShowModal()
+                            return False
                 
         allExclusions = getExclusions( xmldoc )
         backupExclusions = []
@@ -741,7 +768,7 @@ class WonderGUI(wx.Frame):
                 backupExclusions.append(allExclusions[each][i])
         backupExclusions.sort()
 
-        notebook.GetPage(7).backupProgress(notebook, backupLocations, selectedTargetLocation, backupExclusions)
+        return notebook.GetPage(7).backupProgress(notebook, backupLocations, selectedTargetLocation, backupExclusions)
 
 
 
@@ -781,9 +808,13 @@ class WonderGUI(wx.Frame):
                 self.btn_prev.Disable()
                 self.btn_prev.Hide()
                 self.btn_next.Disable()
-                self.getBackupSettings(notebook)
-                self.btn_next.Enable()
-                self.btn_next.SetLabel("Close")
+                if self.getBackupSettings(notebook):
+                    self.btn_next.Enable()
+                    self.btn_next.SetLabel("Close")
+                else:
+                    self.btn_prev.Enable()
+                    self.btn_prev.Show()
+                    self.btn_next.Enable()
             if notebook.GetSelection() == 1:
                 if notebook.GetPage(1).getSelection() == 'local':
                     notebook.GetPage(notebook.GetSelection()+2).Show()
