@@ -4,7 +4,7 @@
 #
 # Contains the functions for the graphical user interface.
 #
-# Modified by Sean Davis on November 23, 2010
+# Modified by Sean Davis on November 28, 2010
 # ---------------------------------------------------------------------------- #
 
 import wx
@@ -545,7 +545,7 @@ class Tab_BackupProgress(wx.Panel):
         An error log is generated at the targetDirectory as ErrorLog.txt"""
         try:
             ErrorLog = open(dirString(targetDirectory) + "ErrorLog.txt", 'a')
-        except:
+        except Exception:
             dialog = wx.MessageDialog(None, "This location does not\nappear to be writeable.", 'Write Error', wx.OK | 
                 wx.ICON_EXCLAMATION)
             dialog.ShowModal()
@@ -661,6 +661,7 @@ class WonderGUI(wx.Frame):
             notebook = wx.Notebook(panel, style=wx.NB_LEFT)
         else:
             notebook = wx.Notebook(panel, style=wx.NB_TOP)
+        self.current_page = 1
         tabWelcome = Tab_Welcome(notebook, messages )
         notebook.AddPage(tabWelcome, "Welcome")
 # Select Backup Type Tab:
@@ -696,6 +697,8 @@ class WonderGUI(wx.Frame):
         self.btn_next = wx.Button(navigation_panel, label="Next")
         self.Bind(wx.EVT_BUTTON, self.goPrevious(notebook), self.btn_prev)
         self.Bind(wx.EVT_BUTTON, self.goNext(notebook), self.btn_next)
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.OnNotebookPageChanging(notebook), notebook)
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnNotebookPageChange(notebook, self.btn_prev, self.btn_next), notebook)
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(self.btn_prev, 1, wx.ALL, 5)
@@ -775,7 +778,30 @@ class WonderGUI(wx.Frame):
         Creates a dialog box that tells what important setting is missing."""
         dialog = wx.MessageDialog(None, "Missing information for\n" + what, 'You\'re Missing Something', wx.OK | 
             wx.ICON_EXCLAMATION)
-        dialog.ShowModal()        
+        dialog.ShowModal()
+        
+    def OnNotebookPageChanging(self, notebook):
+        def OnPageChange(event):
+            current_page = notebook.GetSelection()
+            self.current_page = current_page
+        return OnPageChange
+        
+    def OnNotebookPageChange(self, notebook, btn_prev, btn_next):
+        def OnPageChange(event):
+            new_page = notebook.GetSelection()
+            if btn_next.Label != "Close":
+                btn_next.SetLabel("Next")
+            if btn_next.Label == "Close":
+                notebook.ChangeSelection(self.current_page)
+            elif new_page == 0:
+                btn_prev.Disable()
+            else:
+                btn_prev.Enable()
+                btn_prev.Show()
+                if new_page == 7:
+                    btn_next.SetLabel("Start Backup")
+            self.current_page = notebook.GetSelection()
+        return OnPageChange
 
     def goPrevious(self, notebook):
         """goPrevious( notebook )
@@ -829,7 +855,7 @@ class WonderGUI(wx.Frame):
                     self.btn_next.SetLabel(label="Start Backup")
                 try:
                     notebook.ChangeSelection(notebook.GetSelection()+1)
-                except:
+                except Exception:
                     False
         return onclick_next
 

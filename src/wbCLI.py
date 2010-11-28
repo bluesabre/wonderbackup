@@ -4,7 +4,7 @@
 #
 # Contains the functions for the command-line interface.
 #
-# Modified by Sean Davis on November 27, 2010
+# Modified by Sean Davis on November 28, 2010
 # ---------------------------------------------------------------------------- #
 
 from wbBackup import *
@@ -117,7 +117,7 @@ def selectBackupLocations(messages, source, user, locations):
     """
     selectedLocations = {}
     operatingSystem = detectOS(source)
-    profileFolder = dirString( getProfilesFolder(source) + user )
+    profileFolder = dirString(getProfilesFolder(source) + user)
     print messages['backup']['select-locations']
     for location in locations.keys():
         ans = ""
@@ -204,7 +204,8 @@ def cliBackup(messages, backupLocations, targetDirectory, exclusionPatterns):
             print messages['backup-progress']['copying-file'] + str(i) + \
                   messages['backup-progress']['of'] + str(total) + "..."
             if isfile(targetFiles[i]):
-                if getAttributes(backupFiles[i]) != getAttributes(targetFiles[i]):
+                if getAttributes(backupFiles[i]) != \
+                   getAttributes(targetFiles[i]):
                     print "  Updating [" + targetFiles[i] + "]\r\n"
                     CopyError = copy(backupFiles[i], targetFiles[i])
                     if CopyError != True:
@@ -220,7 +221,7 @@ def cliBackup(messages, backupLocations, targetDirectory, exclusionPatterns):
     ErrorLog.close()
     
 def startBackup(messages, backupType, sourceDirectory, targetDirectory, user, 
-                backupLocations, exclusions ):
+                backupLocations, exclusions):
     """Request confirmation that the selected backup settings are correct.
     Start the backup when the user has confirmed the settings.
     
@@ -280,7 +281,7 @@ if __name__ == "__main__":
     # Select Exclusions
         selectedExclusions = selectExclusions( messages, exclusions )
     # Start the Backup Progress
-        startBackup(messages, backupType, sourceDirectory, targetDirectory, user, 
-                    backupLocations, selectedExclusions )
+        startBackup(messages, backupType, sourceDirectory, targetDirectory, 
+                    user, backupLocations, selectedExclusions )
     except KeyboardInterrupt:
         print "\n\n" + messages['error']['user-abort'] + "\n\n"

@@ -4,7 +4,7 @@
 #
 # Contains the functions for the file-related tasks.
 #
-# Modified by Sean Davis on November 14, 2010
+# Modified by Sean Davis on November 28, 2010
 # ---------------------------------------------------------------------------- #
 
 import os
@@ -12,12 +12,13 @@ import datetime
 
 
 def readableSize( n_bytes ):
-    """readableSize( long int n_bytes ) -> size
+    """Return a string containing the size 'n_bytes' in its highest
+    representation to the second decimal place.
     
-    Returns a string of the size in its highest representation to the second
-    decimal place.
+    Keyword arguments:
+    n_bytes -- a long int value representing filesize in bytes.
     
-    return string size"""
+    """
     readable = ""
     if n_bytes >= 1073741824:
         value = (str(n_bytes/1073741824.0), "GB")
@@ -43,12 +44,18 @@ def readableSize( n_bytes ):
 
 
 def getAttributes( filename ):
-    """getAttributes( string filename ) -> dict
+    """Return a dictionary containing the file size and modification time.
     
-    Returns a dictionary containing the file's size and modification  date.  
-    Keys are 'size' and 'modified'. 
+    Keyword arguments:
+    filename -- a string containing the path to a file.
     
-    return dict attributes"""
+    Dictionary keys:
+    size -- a string containing the file size in its highest representation to
+    the second decimal point.
+    modified -- a dictionary containing the file modification time.  Keys are
+    'year', 'month', 'day', and 'time'.
+    
+    """
     attributes = {}
     attributes['size'] = readableSize(os.stat(filename).st_size)
     mod_date = {}
