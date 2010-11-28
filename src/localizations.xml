@@ -43,6 +43,14 @@ external media or a computer on your network.
         
         <message category="dialog" name="file-open-error">There was an error in opening the specified file.</message>
         <message category="dialog" name="file-save-error">There was an error in saving the specified file.  Ensure the disk is not write-protected.</message>
+        
+        <message category="error" name="enter-integer-123">Please enter an integer: 1, 2, or 3.</message>
+        <message category="error" name="enter-integer-1to">Please enter an integer: 1 through </message>
+        <message category="error" name="directory-exists">Directory already exists.</message>
+        <message category="error" name="files-missing">One or more required files are missing.  Exiting.</message>
+        <message category="error" name="user-abort">Program aborted by user.</message>
+        <message category="error" name="not-writable">This location does not appear to be writable.</message>
+        <message category="error" name="exit">This program must now exit.</message>
     
         <message category="prompt" name="enter-selection">Enter your selection as a number: </message>
         <message category="prompt" name="enter-location">Please enter a valid location to store your backup: </message>

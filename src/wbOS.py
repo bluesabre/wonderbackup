@@ -7,11 +7,12 @@
 # Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
-from wbXML import *
-from platform import uname
 from os import getenv, listdir
 from os.path import isdir
+from platform import uname
+
 from wbFile import readableSize
+from wbXML import *
 
 
 try:
@@ -88,9 +89,10 @@ def freespace(directory):
         space = statvfs(directory)
         size = space.f_bsize * space.f_bavail
         readable = readableSize(size)
-        return "Approximately " + readable + " available on this location."
+        if str(readable) != "0":
+            return "Approximately " + readable + " available on this location."
     else:
-        return "Free Space detection not available on this platform."
+        return ""
 
 def getCurrentUser():
     """Returns the currently logged in user.

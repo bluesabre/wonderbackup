@@ -7,8 +7,8 @@
 # Modified by Sean Davis on November 14, 2010
 # ---------------------------------------------------------------------------- #
 
-from xml.etree import ElementTree as ET
 import os
+from xml.etree import ElementTree as ET
 
 
 def readXML(filename):

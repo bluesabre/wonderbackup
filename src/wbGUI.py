@@ -8,10 +8,11 @@
 # ---------------------------------------------------------------------------- #
 
 import wx
-from wbXML import *
+
 from wbBackup import *
 from wbFile import *
 from wbOS import *
+from wbXML import *
 
         
 ### --- Backup Progress Notebook Tabs -------------------------------------- ###
@@ -543,7 +544,7 @@ class Tab_BackupProgress(wx.Panel):
         
         An error log is generated at the targetDirectory as ErrorLog.txt"""
         try:
-            ErrorLog = open( dirString(targetDirectory)+"ErrorLog.txt", 'a')
+            ErrorLog = open(dirString(targetDirectory) + "ErrorLog.txt", 'a')
         except:
             dialog = wx.MessageDialog(None, "This location does not\nappear to be writeable.", 'Write Error', wx.OK | 
                 wx.ICON_EXCLAMATION)
@@ -582,14 +583,10 @@ class Tab_BackupProgress(wx.Panel):
                         CopyError = copy( backupFiles[i], targetFiles[i] )
                         if CopyError != True:
                             ErrorLog.write(CopyError + "\r\n")    
-                        else:
-                            attrib = getAttributes(backupFiles[i])
                 else:
                     CopyError = copy( backupFiles[i], targetFiles[i] )
                     if CopyError != True:
                         ErrorLog.write(CopyError + "\r\n")    
-                    else:
-                        attrib = getAttributes(backupFiles[i])
                 self.remainingFiles -= 1
                 self.remainingSize -= self.fileSizes[backupFiles[i]]
                 wx.Yield()

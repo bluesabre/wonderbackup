@@ -4,7 +4,7 @@
 #
 # Contains the functions for the command-line interface.
 #
-# Modified by Sean Davis on November 14, 2010
+# Modified by Sean Davis on November 27, 2010
 # ---------------------------------------------------------------------------- #
 
 from wbBackup import *
@@ -13,19 +13,25 @@ from wbOS import *
 from wbXML import *
 
 
-def selectBackupType( messages ):
-    """selectBackupType( dict messages ) -> string
-
-    The first of the commandline backup steps.
-
-    Runs the user through the backup type selection, returning the selection as 
-    a string, 'local', 'external', or 'preconfigured'.
-
-    return string answer"""
+def selectBackupType(messages):
+    """The first step of the commandline backup wizard.
+    Prompt the user for the type of backup to be performed.  
+    Return a string containing the type of backup selected.
+    
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    
+    """
     print messages['backup']['backup-type']
     answer = 0
     while answer < 1 or answer > 3:
-        answer = input("1. " + messages['backup-option']['local'] + "\n2. " + messages['backup-option']['external'] + "\n3. " + messages['backup-option']['preconfigured'] + "\n\n" + messages['prompt']['enter-selection'])
+        print "1. " + messages['backup-option']['local'] + "\n" + \
+              "2. " + messages['backup-option']['external'] + "\n" + \
+              "3. " + messages['backup-option']['preconfigured'] + "\n\n"
+        try:
+            answer = input(messages['prompt']['enter-selection'])
+        except Exception:
+            print messages['error']['enter-integer-123'] + "\n"
     print "\n\n\n"
     if answer == 1:
         return 'local'
@@ -33,14 +39,15 @@ def selectBackupType( messages ):
         return 'external'
 
 def selectSource(messages, backupType):
-    """select_source( dict messages, string backupType ) -> string
-
-    The second of the commandline backup steps.
-
-    Runs the user through the backup source selection, if necessary, returning 
-    the location as a string.
-
-    return string location"""
+    """The second step of the commandline backup wizard.
+    Prompt the user (if necessary) of the source device to backup.
+    Return a string containing the source that is either entered by the user or
+    automatically generated.
+    
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    
+    """
     if backupType == 'local':
         if detectOS()['family'] == 'windows':
             return 'C:\\'
@@ -48,78 +55,99 @@ def selectSource(messages, backupType):
             return '/'
     else:
         print messages['backup']['select-source']
+        location = "a"
+        while not checkLocation(location):
+            location = raw_input(messages['prompt']['enter-location'] + "\n ")
+            if location == '/': location = "\\"
+        if location == "\\": location = '/'
         print "\n\n\n"
+        return location
 
-def selectTarget( messages ):
-    """selectTarget( dict messages ) -> string
+def selectTarget(messages):
+    """The third step of the commandline backup wizard.
+    Prompt the user for the target location to store the backup.
+    Return a string containing the location entered by the user.
     
-    The third of the commandline backup steps.
-
-    Returns the location that is entered by the user.  Checks for validity and 
-    adds necessary trailing slashes.
-
-    return string location"""
-    print messages['backup']['backup-type']
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    
+    """
+    print messages['backup']['select-target']
     location = "a"
     while not checkLocation(location):
         location = raw_input(messages['prompt']['enter-location'] + "\n ")
     print "\n\n\n"
     return location
 
-def selectUser( messages, source ):
-    """selectUser( dict messages, string source ) -> string
+def selectUser(messages, source):
+    """The fourth step of the commandline backup wizard.
+    Prompt the user for the profile to be backed up.
+    Return a string containing the user profile name selected by the user.
     
-    The fourth of the commandline backup steps.
-
-    Returns the user profile selected for backup.
-
-    return string profile"""
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    source -- a string containing the path to the source device.
+    
+    """
     print messages['backup']['select-user']
-    users = getProfiles( source )
-    for i in range(1,len(users)+1):
-        print str(i) + ". " + users[i-1]
+    users = getProfiles(source)
+    for i in range(1, len(users) + 1):
+        print str(i) + ". " + users[i - 1]
     ans = 0
     while ans < 1 or ans > len(users):
-        ans = input(messages['prompt']['select-profile'])
+        try:
+            ans = input(messages['prompt']['select-profile'])
+        except Exception:
+            print "\n" + messages['error']['enter-integer-1to'] + \
+                  str(len(users)) + "\n"
     print "\n\n\n"
-    return users[ans-1]
+    return users[ans - 1]
    
-def selectBackupLocations( messages, source, user, locations ):
-    """selectBackupLocations( dict messages, string source, string user, dict locations ) -> dict
+def selectBackupLocations(messages, source, user, locations):
+    """The fifth step of the commandline backup wizard.
+    Prompt the user for the profile locations to be backed up.
+    Return a dictionary of the profile locations selected by the user.
     
-    The fifth of the commandline backup steps.
-
-    Returns the list of backup locations to be backed up.
-
-    return dict selectedLocations"""
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    source -- a string containing the path to the source device.
+    user -- a string containing a user profile name.
+    locations -- a dictionary of all locations for every Operating System.
+    
+    """
     selectedLocations = {}
     operatingSystem = detectOS(source)
-    profileFolder = dirString( getProfilesFolder( source ) + user )
+    profileFolder = dirString( getProfilesFolder(source) + user )
     print messages['backup']['select-locations']
     for location in locations.keys():
         ans = ""
         while ans != 'y' and ans != 'n':
-            ans = raw_input(messages['prompt']['to-backup'] + location + "?\ny or n: ")
+            ans = raw_input(messages['prompt']['to-backup'] + location + \
+                            "?\ny or n: ")
             ans = ans.lower()
         if ans == 'y':
-            selectedLocations[location] = dirString( profileFolder + locations[location] )
+            selectedLocations[location] = dirString(profileFolder + \
+                                                    locations[location])
     print "\n\n\n"
     return selectedLocations    
     
-def selectExclusions( messages, exclusions ):
-    """selectExclusions( dict messages, dict exclusions ) -> list
+def selectExclusions(messages, exclusions):
+    """The sixth step of the commandline backup wizard.
+    Prompt the user for any exclusions to be made for the files backed up.
+    Return a list of exclusion patterns.
     
-    The sixth of the commandline backup steps.
-
-    Returns a list of the exclusion patterns, as selected by the user.
-
-    return list exclusions"""
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    exclusions -- a dictionary of all possibile exclusion options.
+    
+    """
     print messages['backup']['select-exclusions']
     exclusionPatterns = []
     for pattern in exclusions.keys():
         ans = ""
         while ans != 'y' and ans != 'n':
-            ans = raw_input(messages['prompt']['to-exclude'] + pattern + "?\ny or n: ")
+            ans = raw_input(messages['prompt']['to-exclude'] + pattern + \
+                            "?\ny or n: ")
             ans = ans.lower()
         if ans == 'y':
             for exclusion in exclusions[pattern]:
@@ -128,37 +156,84 @@ def selectExclusions( messages, exclusions ):
     print "\n\n\n"
     return exclusionPatterns
     
-def cliBackup( messages, backupLocations, targetDirectory, exclusionPatterns ):
-    """cliBackup( dict message, list backupLocations, string targetDirectory, list exclusionPatterns)
+def cliBackup(messages, backupLocations, targetDirectory, exclusionPatterns):
+    """The seventh and final step of the commandline backup wizard.
+    Begin the backup process, following user confirmation.
     
-    Performs the command-line backup, using the language from messages, of files
-    from the list backupLocations to the targetDirectory, excluding any files
-    that match the exclusionPatterns."""
-
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    backupLocations -- a dictionary of locations selected to backup.
+    targetDirectory -- a string containing the location to store the backup.
+    exclusionPatterns -- a list of exclusion patterns.
+    
+    """
+    try:
+        ErrorLog = open(dirString(targetDirectory) + "ErrorLog.txt", 'a')
+    except Exception:
+        print messages['error']['not-writable'] + "\n"
+        print messages['error']['exit'] + "\n"
+        exit()
+    ErrorLog.write("[Wonder Backup Session " + timestamp() + "]\r\n")
     for key in backupLocations.keys():
-        print messages['backup-progress']['category-backup'] + "[" + key + "]\n\n"
-        mkdir(dirString(targetDirectory) + key)
-        print "\t" + messages['backup-progress']['getting-files'] + backupLocations[key] + "..."
-        backupFiles = getBackupFiles( backupLocations[key], exclusionPatterns )
+        print messages['backup-progress']['category-backup'] + "[" + key + "]\n"
+        try:
+            mkdir(dirString(targetDirectory) + key)
+        except Exception:
+            print messages['error']['directory-exists'] + "\n"
+        print "\t" + messages['backup-progress']['getting-files'] + \
+              backupLocations[key] + "..."
+        backupFiles = getBackupFiles(backupLocations[key], exclusionPatterns)
         backupFiles.sort()
-        print "\t" + messages['backup-progress']['found'] + str(len(backupFiles)-1) + messages['backup-progress']['files-to-backup']
+        print "\t" + messages['backup-progress']['found'] + \
+              str(len(backupFiles) - 1) + \
+              messages['backup-progress']['files-to-backup']
     
-        print "\t" + messages['backup-progress']['building-structure'] + targetDirectory + "...\n\n"
-        makeBackupFolders( backupLocations[key], dirString(targetDirectory) + key )
+        print "\t" + messages['backup-progress']['building-structure'] + \
+              targetDirectory + "...\n\n"
+        makeBackupFolders(backupLocations[key], dirString(targetDirectory) + \
+                          key)
         
         print "\t" + messages['backup-progress']['configuring-target'] + "\n\n"
-        targetFiles = targetFilenames( backupLocations[key], dirString( dirString(targetDirectory) + key), backupFiles )
+        targetFiles = targetFilenames(backupLocations[key], 
+                                      dirString(dirString(targetDirectory) + \
+                                                key), backupFiles )
         targetFiles.sort()
         
-        total = len(backupFiles)-1
+        total = len(backupFiles) - 1
         for i in range(len(backupFiles)):
-            print messages['backup-progress']['copying-file'] + str(i) + messages['backup-progress']['of'] + str(total) + "..."
-            copy( backupFiles[i], targetFiles[i] )        
-
-def startBackup( messages, backupType, sourceDirectory, targetDirectory, user, backupLocations, exclusions ):
-    """startBackup( dict messages, string backupType, string sourceDirectory, string targetDirectory, string user, dict backupLocations, list exclusions )
-
-    Confirms that all settings are correct and begins the backup program."""
+            print messages['backup-progress']['copying-file'] + str(i) + \
+                  messages['backup-progress']['of'] + str(total) + "..."
+            if isfile(targetFiles[i]):
+                if getAttributes(backupFiles[i]) != getAttributes(targetFiles[i]):
+                    print "  Updating [" + targetFiles[i] + "]\r\n"
+                    CopyError = copy(backupFiles[i], targetFiles[i])
+                    if CopyError != True:
+                        ErrorLog.write(CopyError + "\r\n")   
+                else:
+                    print "  [" + targetFiles[i] + "] already up-to-date.\r\n" 
+            else:
+                print "  Copying [" + targetFiles[i] + "]\r\n"
+                CopyError = copy( backupFiles[i], targetFiles[i] )
+                if CopyError != True:
+                    ErrorLog.write(CopyError + "\r\n")
+    ErrorLog.write("[END SESSION]\r\n\r\n\r\n\r\n")
+    ErrorLog.close()
+    
+def startBackup(messages, backupType, sourceDirectory, targetDirectory, user, 
+                backupLocations, exclusions ):
+    """Request confirmation that the selected backup settings are correct.
+    Start the backup when the user has confirmed the settings.
+    
+    Keyword arguments:
+    messages -- the dictionary of all output for the locale.
+    backupType -- a string containing the backup type.
+    sourceDirectory -- a string containing the path to the source device.
+    targetDirectort -- a string containing the location to store the backup.
+    user -- a string containing the user profile name.
+    backupLocations -- a dictionary containing the locations to backup.
+    exclusions -- a list of exclusion patterns.
+    
+    """
     print messages['summary']['proceed']
     print messages['summary']['details']
     print messages['summary']['type'] + str(backupType)
@@ -176,25 +251,36 @@ def startBackup( messages, backupType, sourceDirectory, targetDirectory, user, b
 #----------------------------------------------------------------------
 if __name__ == "__main__":
     language = 'en'
-    settings = readXML("wonderbackup.xml")
-    messages = getMessages(readXML("localizations.xml"), language)
-# Messages are in the format (backup_wizard, backup_options, dialogs, prompts, summary, welcome)
-    exclusions = getExclusions(settings)
+    try:
+        settings = readXML("wonderbackup.xml")
+        messages = getMessages(readXML("localizations.xml"), language)
+    except Exception:
+        print messages['error']['files-missing'] + "\n"
+        exit()
+# Messages are in the format (backup_wizard, backup_options, dialogs, prompts, 
+#                             summary, welcome)
+    try:
+        exclusions = getExclusions(settings)
 
-# Welcome Message
-    print messages['welcome']['welcome'] #Welcome Message
-# Backup Type
-    backupType = selectBackupType(messages) 
-# Select Source
-    sourceDirectory = selectSource(messages, backupType)
-    locations = getLocations(settings, detectOS(sourceDirectory)['family'], detectOS(sourceDirectory)['version'])
-# Select Target
-    targetDirectory = selectTarget( messages )
-# Select User
-    user = selectUser( messages, sourceDirectory )
-# Select Backup Locations
-    backupLocations = selectBackupLocations( messages, sourceDirectory, user, locations )
-# Select Exclusions
-    selectedExclusions = selectExclusions( messages, exclusions )
-# Start the Backup Progress
-    startBackup( messages, backupType, sourceDirectory, targetDirectory, user, backupLocations, selectedExclusions )
+    # Welcome Message
+        print messages['welcome']['welcome'] #Welcome Message
+    # Backup Type
+        backupType = selectBackupType(messages) 
+    # Select Source
+        sourceDirectory = selectSource(messages, backupType)
+        locations = getLocations(settings, detectOS(sourceDirectory)['family'], 
+                                 detectOS(sourceDirectory)['version'])
+    # Select Target
+        targetDirectory = selectTarget( messages )
+    # Select User
+        user = selectUser( messages, sourceDirectory )
+    # Select Backup Locations
+        backupLocations = selectBackupLocations(messages, sourceDirectory, user, 
+                                                locations)
+    # Select Exclusions
+        selectedExclusions = selectExclusions( messages, exclusions )
+    # Start the Backup Progress
+        startBackup(messages, backupType, sourceDirectory, targetDirectory, user, 
+                    backupLocations, selectedExclusions )
+    except KeyboardInterrupt:
+        print "\n\n" + messages['error']['user-abort'] + "\n\n"
