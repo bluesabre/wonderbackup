@@ -4,7 +4,7 @@
 #
 # Contains the functions for the file-related tasks.
 #
-# Modified by Sean Davis on November 28, 2010
+# Modified by Sean Davis on December 7, 2010
 # ---------------------------------------------------------------------------- #
 
 import os

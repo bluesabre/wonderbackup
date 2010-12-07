@@ -4,7 +4,7 @@
 #
 # Contains the functions for the command-line interface.
 #
-# Modified by Sean Davis on November 28, 2010
+# Modified by Sean Davis on December 7, 2010
 # ---------------------------------------------------------------------------- #
 
 from wbBackup import *
@@ -24,10 +24,10 @@ def selectBackupType(messages):
     """
     print messages['backup']['backup-type']
     answer = 0
-    while answer < 1 or answer > 3:
+    while answer < 1 or answer > 2:
         print "1. " + messages['backup-option']['local'] + "\n" + \
-              "2. " + messages['backup-option']['external'] + "\n" + \
-              "3. " + messages['backup-option']['preconfigured'] + "\n\n"
+              "2. " + messages['backup-option']['external'] + "\n" # + \
+#              "3. " + messages['backup-option']['preconfigured'] + "\n\n"
         try:
             answer = input(messages['prompt']['enter-selection'])
         except Exception:
@@ -258,8 +258,6 @@ if __name__ == "__main__":
     except Exception:
         print messages['error']['files-missing'] + "\n"
         exit()
-# Messages are in the format (backup_wizard, backup_options, dialogs, prompts, 
-#                             summary, welcome)
     try:
         exclusions = getExclusions(settings)
 

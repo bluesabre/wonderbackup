@@ -4,7 +4,7 @@
 #
 # Contains the functions for the operating system dependent tasks.
 #
-# Modified by Sean Davis on November 14, 2010
+# Modified by Sean Davis on December 7, 2010
 # ---------------------------------------------------------------------------- #
 
 from os import getenv, listdir
@@ -21,12 +21,14 @@ except ImportError:
     pass
 
 def dirString( directory ):
-    """dirString( string directory ) -> string
+    """Return a string containing the directory listing in the proper format 
+    based on the host operating system, and if the listing is not a file, adds 
+    trailing slashes.
     
-    Returns the directory listing in the proper format based on the host
-    operating system, and if the listing is not a file, adds trailing slashes.
+    Keyword arguments:
+    directory -- a string containing a valid path.
     
-    return string dir"""
+    """
     if detectOS()['family'] == 'windows':
         dir = directory.replace('/','\\')
         if isdir(dir) and dir[len(dir)-1] != '\\':
@@ -41,15 +43,19 @@ def dirString( directory ):
             return dir
 
 def detectOS( directory='local' ):
-    """detectOS( string directory ) -> dict
+    """Return a dictionary of the detected Operating System.  This function 
+    works with both local and external directories, and can be called with the 
+    directory or left blank to assume local.
 
-    Returns a dictionary of the detected Operating System.  This function works 
-    with both local and external directories, and can be called with the directory 
-    or left blank to assume local.
+    Keyword arguments:
+    directory -- a string containing a valid path.
     
-    Keys are 'family', 'version' and 'readable'.
+    Dictionary keys:
+    family -- a string containing the OS Family.
+    version -- a string containing the OS Version.
+    readable -- a string containing the human-readable operating system version.
 
-    Return dict """
+    """
     if directory == 'local':
         osFamily = uname()[0].lower()
         osVersion = uname()[2].lower()
@@ -60,7 +66,7 @@ def detectOS( directory='local' ):
                 return {'family':'windows', 'version':'xp,2003', 'readable':'Windows XP or 2003'}
         elif osFamily == 'linux':
             return {'family':'linux', 'version':'ubuntu', 'readable':'Linux'}
-        else: # osFamily == 'mac'
+        else:
             return {'family':'mac', 'version':'osx', 'readable':'Mac OS X'}
     else:
         folders = listdir( dirString(directory) )
@@ -79,12 +85,15 @@ def detectOS( directory='local' ):
 
 
 def freespace(directory):
-    """freespace( string directory ) -> string
+    """Return a string containing the amount of free space available for the 
+    given directory in its highest representation.
     
-    Returns the amount of free space available for the given directory in its
-    highest representation.
+    * Linux Only
     
-    return string"""
+    Keyword arguments:
+    directory -- a string containing a valid path.
+    
+    """
     if detectOS()['family'] == 'linux':
         space = statvfs(directory)
         size = space.f_bsize * space.f_bavail
@@ -95,31 +104,32 @@ def freespace(directory):
         return ""
 
 def getCurrentUser():
-    """Returns the currently logged in user.
-
-    return string username"""
+    """Return a string containing the currently logged in user."""
     if detectOS()['family'] == "windows":
         return getenv("USERNAME")
     else:
         return getenv("USER")
 
 def checkLocation( directory ):
-    """checkLocation( string directory )
-
-    Checks if a given location actually exists.
-
-    return bool"""
+    """Return true if a given location actually exists.
+    
+    Keyword arguments:
+    directory -- a string containing a valid path.
+    
+    """
     if isdir( dirString(directory) ):
         return True
     else:
         return False
 
 def getProfilesFolder( sourceDirectory ):
-    """getProfilesFolder( string sourceDirectory ) -> string
-
-    Returns the location of the user profiles for the given sourceDirectory.
-
-    return string profilesDir"""
+    """Return a string containing the location of the user profiles for the 
+    given sourceDirectory.
+    
+    Keyword arguments:
+    sourceDirectory -- a string containing a valid path.
+    
+    """
     operatingSystem = detectOS( sourceDirectory )
     if operatingSystem['family'] == 'windows' and operatingSystem['version'] == 'xp,2003':
         profilesDir = sourceDirectory + "Documents and Settings/"
@@ -132,11 +142,12 @@ def getProfilesFolder( sourceDirectory ):
     return dirString( profilesDir )
 
 def getProfiles( sourceDirectory ):
-    """getProfiles( string sourceDirectory ) -> list
-
-    Returns a list of the profiles found on the given sourceDirectory.
-
-    return list profiles"""
+    """Return a list of the profiles found on the given sourceDirectory.
+    
+    Keyword arguments:
+    sourceDirectory -- a string containing a valid path.
+    
+    """
     profiles_dir = getProfilesFolder( dirString(sourceDirectory) )
     structure = listdir( dirString(profiles_dir) )
     profiles = []

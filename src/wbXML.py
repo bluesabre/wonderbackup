@@ -4,7 +4,7 @@
 #
 # Contains the functions for the XML processing.
 #
-# Modified by Sean Davis on November 14, 2010
+# Modified by Sean Davis on December 7, 2010
 # ---------------------------------------------------------------------------- #
 
 import os
@@ -12,11 +12,12 @@ from xml.etree import ElementTree as ET
 
 
 def readXML(filename):
-    """readXML( string filename ) -> ElementTree
+    """Return the Tree of the XML file.
     
-    Returns the Tree of the XML file.
+    Keyword arguments:
+    filename -- a string containing a valid filename.
     
-    return ElementTree.tree"""
+    """
     xml_file = os.path.abspath(filename)
     xml_file = os.path.dirname(xml_file)
     xml_file = os.path.join(xml_file, filename)
@@ -29,11 +30,14 @@ def readXML(filename):
     return tree
     
 def getLocations( xmldoc, osFamily, osVersion ):
-    """getLocations( ElementTree xmldoc, string osFamily, string osVersion ) -> dict
+    """Returns a dictionary containing the OS-specificbackup locations.
     
-    Returns a dictionary containing the backup locations for the osFamily and osVersion defined in the xmldoc.
+    Keyword arguments:
+    xmldoc -- an object of ElementTree.
+    osFamily -- a string containing the family of the operating system.
+    osVersion -- a string containing the version of the operating system.
     
-    return dict"""
+    """
     allLocations = xmldoc.find('.//backup_locations').getchildren()
     locationDict = {}
     for i in range( len(allLocations) ):
@@ -43,11 +47,12 @@ def getLocations( xmldoc, osFamily, osVersion ):
     return locationDict
     
 def getExclusions( xmldoc ):
-    """getExclusions( ElementTree xmldoc ) -> dict
+    """Return a dictionary containing the exclusions defined in the xmldoc.
     
-    Returns a dictionary containing the exclusions defined in the xmldoc.
+    Keyword arguments:
+    xmldoc -- an object of ElementTree.
     
-    return dict"""
+    """
     allExclusions = xmldoc.find('.//exclusion_definitions').getchildren()
     exclusionDict = {}
     typeList = []
@@ -56,15 +61,16 @@ def getExclusions( xmldoc ):
     return exclusionDict
     
 def getMessages( xmldoc, language ):
-    """getMessages( ElementTree xmldoc, language ) -> dict
+    """Return a dictionary (of dictionaries) for each category (and message 
+    types) defined in the language of the xmldoc.
     
-    Returns a dictionary (of dictionaries) for each category (and message types)
-    defined in the language of the xmldoc.
-    Example:
-     > messages = getMessages( readXML("wonderbackup.xml"), 'en' )
-     > print messages['about']['description']
+    Keyword arguments:
+    xmldoc -- an object of ElementTree.
     
-    return dict messageDict"""
+    Dictionary keys:
+    (Defined by the XML document.)
+    
+    """
     allLanguages = xmldoc.findall('.//locale')
     messageDict = {}
     for i in range( len(allLanguages) ):
@@ -80,7 +86,3 @@ def getMessages( xmldoc, language ):
                 dictionary[allLanguages[i][j].attrib.get('name')] = allLanguages[i][j].text
             messageDict[allLanguages[i][j].attrib.get('category')] = dictionary
         return messageDict
-
-def writeXML(tree, filename):
-    print "Not Yet Implemented"
-    return False

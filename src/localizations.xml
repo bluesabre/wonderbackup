@@ -2,15 +2,27 @@
 <localizations>
     <locale lang="en">
     
-        <message category="about" name="description">Wonder Backup is an open source, Python-powered, operating system independent backup solution for use in scenarios from end-users to enterprise solutions.</message>
-        <message category="about" name="license">Wonder Backup is free software, though licensing is a difficult legal decision that will be left for a later point in time.
-Ultimately, I wish for this software to be free for anyone and everyone, and hope to one day find a suitable license.</message>
-        <message category="about" name="version">0.3.1 Beta</message>
+        <message category="about" name="description">Wonder Backup is an open source, Python-powered, operating system 
+independent backup solution for use in scenarios from end-users to 
+enterprise solutions.</message>
+        <message category="about" name="license">
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/</message>
+        <message category="about" name="version">1.0 Stable One</message>
 
         <message category="backup" name="backup-type">Please select the backup type.  'Local' refers to a backup
-performed on your own computer. 'External' refers to a mounted 
-media, such as an external hard drive.  You can also open a 
-preconfigured backup.
+performed on your own computer. 'External' refers to a 
+mounted media, such as an external hard drive.
 </message>
         <message category="backup" name="select-source">Please select the location that you would like to back up.  
 Select the root of the device for proper Operating System 
@@ -69,7 +81,7 @@ external media or a computer on your network.
     
         <message category="welcome" name="welcome">Welcome to Wonder Backup!
 
-This is a prerelease version.  Use at your own risk.
+This is the first stable release, codenamed "Stable One".
 </message>
 
     </locale>

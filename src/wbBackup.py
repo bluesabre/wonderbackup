@@ -4,7 +4,7 @@
 #
 # Contains the functions used in the backup process.
 #
-# Modified by Sean Davis on November 27, 2010
+# Modified by Sean Davis on December 7, 2010
 # ---------------------------------------------------------------------------- #
 
 from os import walk, listdir, mkdir, stat
